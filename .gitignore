@@ -1,0 +1,9 @@
+# Arquivos e pastas a serem ignorados pelo Git (NÃO MEXER AQUI)
+
+# Informações de segurança e ambiente
+.env
+# Seu ambiente virtual (venv)
+venv/
+# Arquivos de bytecode do Python
+__pycache__/
+*.pyc

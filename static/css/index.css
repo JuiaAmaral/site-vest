@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+}
+
+.produto-card {
+    border: 1px solid #d4d4d4;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    background-color: white;
+}
+
+.preco {
+    color: #a00060; /* Cor da loja */
+    font-size: 1.2em;
+    font-weight: bold;
+}
