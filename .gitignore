@@ -2,8 +2,13 @@
 
 # Informações de segurança e ambiente
 .env
+
 # Seu ambiente virtual (venv)
 venv/
+
 # Arquivos de bytecode do Python
 __pycache__/
 *.pyc
+
+# Arquivo de tudo que precisa ser instalado
+.requeriments.txt
