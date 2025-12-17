@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import pymysql
+pymysql.install_as_MySQLdb()
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -81,7 +83,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.backends.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
