@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Vest Lavichy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --vermelho: #b11226;
+            --dourado: #d4af37;
+            --branco: #ffffff;
+            --cinza: #f5f5f5;
+        }
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 150%;
+            text-align: center;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cinza);
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background-color: var(--vermelho);
+            color: var(--branco);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 6px 0;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--branco);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--vermelho);
+        }
+
+        .header-icons a {
+            color: #333;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .menu-categorias {
+            background-color: var(--branco);
+            border-top: 1px solid #eee;
+        }
+
+        .menu-categorias a {
+            color: #333;
+            font-weight: 500;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        .menu-categorias a:hover {
+            color: var(--vermelho);
+        }
+
+        /* CARROSSEL */
+        .carousel-item img {
+            height: 520px;
+            object-fit: cover;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--vermelho);
+            color: var(--branco);
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        footer h5 {
+            color: var(--dourado);
+            font-weight: bold;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+    
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .menu-categorias {
+                display: none;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .header-icons {
+                display: none;
+            }
+
+            .menu-categorias .container {
+                flex-wrap: wrap;
+            }
+
+            .menu-categorias a {
+                margin: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .carousel-item img {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                font-size: 0.75rem;
+                padding: 8px 5px;
+            }
+
+            header .container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .carousel-item img {
+                height: 240px;
+            }
+
+            footer h5 {
+                font-size: 1.1rem;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+        }
+
+.btn-center {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.btn-lavichy-ret {
+    background-color: #2f2f2f; /* cinza escuro */
+    color: #ffffff;
+    padding: 14px 40px;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    border-radius: 6px; /* levemente arredondado (elegante) */
+    transition: all 0.3s ease;
+    border: 1px solid #2f2f2f;
+}
+
+.btn-lavichy-ret:hover {
+    background-color: #ffffff;
+    color: #2f2f2f;
+}
+
+.produtos-scroll {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+.produtos-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.produto-card {
+    min-width: 75%;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    scroll-snap-align: start;
+}
+
+.produto-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.produto-card h6 {
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.produto-card p {
+    color: #b11226;
+    font-weight: bold;
+}
+
+.categorias-scroll {
+    display: flex;
+    justify-content: center; /* centraliza no desktop */
+    gap: 24px;
+    overflow-x: auto;
+    padding: 10px 0 15px;
+    scroll-snap-type: x mandatory;
+}
+
+.categorias-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.categoria-item {
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    min-width: 110px; /* maior */
+    scroll-snap-align: start;
+}
+
+.categoria-item img {
+    width: 100px;   /* maior */
+    height: 100px;  /* maior */
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #eee;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.categoria-item span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.categoria-item:hover img {
+    transform: scale(1.08);
+    border-color: #b11226;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .categorias-scroll {
+        justify-content: flex-start; /* swipe natural no mobile */
+    }
+
+    .categoria-item {
+        min-width: 120px;
+    }
+
+    .categoria-item img {
+        width: 110px;
+        height: 110px;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR PROMOCIONAL -->
+<div class="top-bar">
+    Frete grátis em compras acima de R$199 • Parcele em até 10x sem juros
+</div>
+
+<!-- HEADER PRINCIPAL -->
+<header>
+    <div class="container d-flex justify-content-between align-items-center py-3">
+        <!-- BOTÃO MENU MOBILE -->
+        <button class="btn d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuMobile">☰</button>
+        <div class="logo">Vest Lavichy</div>
+        <div class="header-icons">
+            <a href="#">Entrar / Cadastrar</a>
+            <a href="#">Meus Pedidos</a>
+            <a href="#">Carrinho</a>
+        </div>
+    </div>
+
+    <!-- MENU CATEGORIAS -->
+    <div class="menu-categorias py-2">
+        <div class="container d-flex justify-content-center">
+            <a href="#">Novidades</a>
+            <a href="#">Feminino</a>
+            <a href="#">Vestidos</a>
+            <a href="#">Roupas</a>
+            <a href="#">Acessórios</a>
+            <a href="#">Promoções</a>
+        </div>
+    </div>
+
+</header>
+
+<!-- MENU MOBILE -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Vest Lavichy</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <a href="#" class="d-block mb-2">Novidades</a>
+    <a href="#" class="d-block mb-2">Feminino</a>
+    <a href="#" class="d-block mb-2">Vestidos</a>
+    <a href="#" class="d-block mb-2">Roupas</a>
+    <a href="#" class="d-block mb-2">Acessórios</a>
+    <a href="#" class="d-block">Promoções</a>
+  </div>
+</div>
+
+
+<!-- BARRA DE BUSCA -->
+<div class="container my-3">
+    <input type="text" class="form-control" placeholder="O que você está procurando?">
+</div>
+
+<!-- CARROSSEL PRINCIPAL -->
+<div id="carouselVestLavichy" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38" class="d-block w-100" alt="Moda feminina">
+        </div>
+        <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f" class="d-block w-100" alt="Coleção elegante">
+        </div>
+        <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b" class="d-block w-100" alt="Estilo moderno">
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselVestLavichy" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselVestLavichy" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- PRODUTOS EM DESTAQUE -->
+<div class="container my-5">
+    <h3 class="mb-4 text-center">SEJA LUXUOSA ESSE FIM DE ANO</h3>
+    <div class="row g-4">
+        <div class="col-6 col-md-3">
+            <div class="card">
+                <img src="..\static\img\elegante_rosa.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6 class="card-title">Vestido Elegante</h6>
+                  
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card">
+                <img src="..\static\img\florida.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6 class="card-title">Conjunto Moderno</h6>
+              
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card">
+                <img src="..\static\img\cativante.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6 class="card-title">Blusa Fashion</h6>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card">
+                <img src="..\static\img\frescor.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6 class="card-title">Saia Premium</h6>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-center">
+    <a href="#" class="btn-lavichy-ret">Ver mais</a>
+</div>
+
+<!-- CARROSSEL PRINCIPAL -->
+<div id="carouselVestLavichy" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38" class="d-block w-100" alt="Moda feminina">
+        </div>
+        <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f" class="d-block w-100" alt="Coleção elegante">
+        </div>
+        <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b" class="d-block w-100" alt="Estilo moderno">
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselVestLavichy" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselVestLavichy" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+
+<!-- PRODUTOS EM DESTAQUE -->
+<div class="container my-5">
+    <h3 class="mb-4 text-center">Destaques</h3>
+
+    <!-- DESKTOP -->
+    <div class="row g-4 d-none d-md-flex">
+        <div class="col-md-3">
+            <div class="card">
+                <img src="..\static\img\elegante_rosa.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6>Vestido Elegante</h6>
+                    <p class="text-danger fw-bold">R$ 199,90</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <img src="..\static\img\florida.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6>Conjunto Moderno</h6>
+                    <p class="text-danger fw-bold">R$ 249,90</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <img src="..\static\img\cativante.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6>Blusa Fashion</h6>
+                    <p class="text-danger fw-bold">R$ 129,90</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <img src="..\static\img\frescor.jpeg" class="card-img-top">
+                <div class="card-body">
+                    <h6>Saia Premium</h6>
+                    <p class="text-danger fw-bold">R$ 179,90</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE (scroll com o dedo) -->
+    <div class="d-md-none produtos-scroll">
+        <div class="produto-card">
+            <img src="..\static\img\elegante_rosa.jpeg">
+            <h6>Vestido Elegante</h6>
+            <p>R$ 199,90</p>
+        </div>
+
+        <div class="produto-card">
+            <img src="..\static\img\florida.jpeg">
+            <h6>Conjunto Moderno</h6>
+            <p>R$ 249,90</p>
+        </div>
+
+        <div class="produto-card">
+            <img src="..\static\img\cativante.jpeg">
+            <h6>Blusa Fashion</h6>
+            <p>R$ 129,90</p>
+        </div>
+
+        <div class="produto-card">
+            <img src="..\static\img\frescor.jpeg">
+            <h6>Saia Premium</h6>
+            <p>R$ 179,90</p>
+        </div>
+    </div>
+</div>
+
+<!-- CATEGORIAS -->
+<div class="container my-4">
+    <h5 class="mb-3">Categorias</h5>
+
+    <div class="categorias-scroll">
+        <a href="#" class="categoria-item">
+            <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38">
+            <span>Vestidos</span>
+        </a>
+
+        <a href="#" class="categoria-item">
+            <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
+            <span>Camisas</span>
+        </a>
+
+        <a href="#" class="categoria-item">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b">
+            <span>Calças</span>
+        </a>
+
+        <a href="#" class="categoria-item">
+            <img src="https://images.unsplash.com/photo-1495121605193-b116b5b09a3d">
+            <span>Saias</span>
+        </a>
+
+        <a href="#" class="categoria-item">
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
+            <span>Blusas</span>
+        </a>
+    </div>
+</div>
+
+
+
+<!-- BOTÃO CARRINHO FLUTUANTE -->
+<a href="#" style="position:fixed;bottom:20px;right:20px;background:#b11226;color:#fff;padding:15px;border-radius:50%;text-decoration:none;font-size:18px;">🛒</a>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container text-center">
+        <h5>Vest Lavichy</h5>
+        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
