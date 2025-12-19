@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Vest Lavichy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="top-bar" style="background: #b11226; color: white; text-align: center; padding: 5px; font-size: 14px;">
+    Frete grátis em compras acima de R$199 • Parcele em até 10x sem juros
+</div>
+
+<header>
+    <div class="container d-flex justify-content-between align-items-center py-3">
+        <div class="logo" style="font-weight: bold; font-size: 24px;">Vest Lavichy</div>
+        <div class="header-icons">
+            {% if user.is_authenticated %}
+                <span>Olá, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="ms-2">Sair</a>
+            {% else %}
+                <a href="{% url 'login' %}">Entrar / Cadastrar</a>
+            {% endif %}
+            <a href="{% url 'carrinho_detalhe' %}" class="ms-3 text-decoration-none">🛒 Carrinho</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer class="mt-5 py-4 bg-light border-top">
+    <div class="container text-center">
+        <h5>Vest Lavichy</h5>
+        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

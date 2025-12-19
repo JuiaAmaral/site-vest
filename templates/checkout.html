@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Vest Lavichy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="container my-5" style="min-height: 70vh;">
+    <h2 class="mb-4 text-center">Resumo da Compra</h2>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card p-4 shadow-sm border-0 mb-4" style="border-radius: 15px; border: 1px solid #eee !important;">
+                <h5>📍 Entrega em {{ perfil.bairro }}</h5>
+                <p class="text-muted">
+                    {{ perfil.logradouro }}, {{ perfil.numero }}<br>
+                    CEP: {{ perfil.cep }} - Rio de Janeiro, RJ
+                </p>
+            </div>
+            <div class="card p-4 shadow-sm border-0" style="background-color: #fdfdfd; border-radius: 15px; border: 1px solid #eee !important;">
+                <h5 class="mb-3">🛍 Itens do Carrinho</h5>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th class="text-center">Qtd</th>
+                                <th class="text-end">Preço</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in itens %}
+                            <tr>
+                                <td>{{ item.produto.nome }}</td>
+                                <td class="text-center">{{ item.quantidade }}</td>
+                                <td class="text-end">R$ {{ item.produto.preco }}</td>
+                                <td class="text-end">R$ {{ item.subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card p-4 shadow-sm border-0" style="background-color: #fdfdfd; border-radius: 15px; border: 1px solid #eee !important;">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>R$ {{ total_produtos }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-danger">
+                    <span>Frete para {{ perfil.bairro }}:</span>
+                    <span>R$ {{ frete }}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="h4">Total:</span>
+                    <span class="h4 text-success">R$ {{ total_geral }}</span>
+                </div>
+                <a href="{% url 'pagamento' %}" class="btn btn-lg w-100 text-white fw-bold" style="background-color: #b11226;">PAGAR AGORA</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container text-center">
+        <h5>Vest Lavichy</h5>
+        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'javascript/index.js' %}"></script>
+
+</body>
+</html>

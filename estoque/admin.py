@@ -1,31 +1,24 @@
 from django.contrib import admin
+from .models import Produto, ImagemProduto, Secao, Categoria
+from .models import FreteBairro
 
-# aqui é o painel de administração pra ficar bonitinho
+# Registrar as categorias e seções para você conseguir cadastrá-las
+admin.site.register(Secao)
+admin.site.register(Categoria)
+admin.site.register(FreteBairro)
 
-from django.contrib import admin
-from .models import Produto, ImagemProduto
-
-# permite editar as imagens na página de edição do produto
 class ImagemProdutoInline(admin.TabularInline):
     model = ImagemProduto
     extra = 1
 
-# registra o modelo produto e personaliza a exibição
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
-    # campos visiveis na lista de produtos do painel
-    list_display = ('nome', 'preco', 'quantidade_estoque', 'em_alerta')
-    
-    # campos que podem ser editados diretamente na lista
+    list_display = ('nome', 'preco', 'quantidade_estoque', 'em_alerta') 
     list_editable = ('preco', 'quantidade_estoque')
-    
-    # adiciona a sub-seção para editar imagens
     inlines = [ImagemProdutoInline]
     
-    # método que define a lógica do alerta de estoque baixo
     def em_alerta(self, obj):
+        # Aqui também deve ser 'quantidade_estoque'
         return obj.quantidade_estoque <= obj.alerta_minimo
-    
-    # configurações visuais (mostra como um checkmark ou X)
     em_alerta.boolean = True
     em_alerta.short_description = 'Estoque Baixo'

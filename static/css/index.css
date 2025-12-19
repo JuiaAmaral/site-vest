@@ -1,19 +1,371 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
+:root {
+            --vermelho: #b11226;
+            --dourado: #d4af37;
+            --branco: #ffffff;
+            --cinza: #f5f5f5;
+        }
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 150%;
+            text-align: center;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Evita barra de rolagem lateral esquisita */
+}
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cinza);
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background-color: var(--vermelho);
+            color: var(--branco);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 6px 0;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--branco);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--vermelho);
+        }
+
+        .header-icons a {
+            color: #333;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* MENU CATEGORIAS (DESKTOP) */
+.menu-categorias {
+    background-color: var(--branco);
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.menu-categorias a {
+    color: #333;
+    font-weight: 500;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+.menu-categorias a:hover {
+    color: var(--vermelho);
+}
+
+        /* GARANTE QUE HEADER E MAIN NÃO ENCOLHAM E O FOOTER FIQUE NO FINAL */
+
+        header, div, main {
+        flex-shrink: 0;
+        }
+
+        /* CARROSSEL */
+        .carousel-item img {
+            height: 520px;
+            object-fit: cover;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--vermelho);
+            color: var(--branco);
+            padding: 20px 0; /* reduzido */
+            margin-top: auto; /* Mágica: joga o footer para o final */
+            width: 100%;      /* Garante borda a borda */
+            margin-top: 30px;
+        }
+
+        footer h5 {
+            color: var(--dourado);
+            font-weight: bold;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+    
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .menu-categorias {
+                display: none;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .header-icons {
+                display: none;
+            }
+
+            .menu-categorias .container {
+                flex-wrap: wrap;
+            }
+
+            .menu-categorias a {
+                margin: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .carousel-item img {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                font-size: 0.75rem;
+                padding: 8px 5px;
+            }
+
+            header .container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .carousel-item img {
+                height: 240px;
+            }
+
+            footer h5 {
+                font-size: 1.1rem;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+        }
+
+.btn-center {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.btn-lavichy-ret {
+    background-color: #2f2f2f; /* cinza escuro */
+    color: #ffffff;
+    padding: 14px 40px;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    border-radius: 6px; /* levemente arredondado (elegante) */
+    transition: all 0.3s ease;
+    border: 1px solid #2f2f2f;
+}
+
+.btn-lavichy-ret:hover {
+    background-color: #ffffff;
+    color: #2f2f2f;
+}
+
+.produtos-scroll {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+.produtos-scroll::-webkit-scrollbar {
+    display: none;
 }
 
 .produto-card {
-    border: 1px solid #d4d4d4;
-    padding: 20px;
-    margin-bottom: 25px;
+    min-width: 75%;
+    background: #ffffff;
     border-radius: 8px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-    background-color: white;
+    padding: 10px;
+    scroll-snap-align: start;
 }
 
-.preco {
-    color: #a00060; /* Cor da loja */
-    font-size: 1.2em;
+.produto-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.produto-card h6 {
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.produto-card p {
+    color: #b11226;
     font-weight: bold;
+}
+
+.categorias-scroll {
+    display: flex;
+    justify-content: center; /* centraliza no desktop */
+    gap: 24px;
+    overflow-x: auto;
+    padding: 10px 0 15px;
+    scroll-snap-type: x mandatory;
+}
+
+.categorias-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.categoria-item {
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    min-width: 110px; /* maior */
+    scroll-snap-align: start;
+}
+
+.categoria-item img {
+    width: 100px;   /* maior */
+    height: 100px;  /* maior */
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #eee;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.categoria-item span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.categoria-item:hover img {
+    transform: scale(1.08);
+    border-color: #b11226;
+}
+
+.carrinho-flutuante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #b11226;
+    color: #fff;
+    width: 60px;  /* Largura fixa para ser um círculo */
+    height: 60px; /* Altura fixa para ser um círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important; /* Força o círculo */
+    text-decoration: none;
+    font-size: 24px;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .categorias-scroll {
+        justify-content: flex-start; /* swipe natural no mobile */
+    }
+
+    .categoria-item {
+        min-width: 120px;
+    }
+
+    .categoria-item img {
+        width: 110px;
+        height: 110px;
+    }
+}
+
+/* barra de pesquisa bonitinha */
+.form-control:focus {
+    border-color: #d4af37; /* Dourado */
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+}
+
+/* HEADER REORGANIZADO */
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-search {
+    display: flex;
+    flex-grow: 1; /* Faz a barra de busca ocupar o espaço restante */
+    margin: 0 20px; /* Espaçamento entre o nome da loja e os botões */
+}
+
+.header-search input {
+    flex-grow: 1; /* Faz o campo de entrada expandir */
+}
+
+.header-search button {
+    white-space: nowrap; /* Garante que o botão não quebre em telas menores */
+}
+
+/* BOTÃO MENU MOBILE */
+button[data-bs-toggle="offcanvas"] {
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+}
+
+button[data-bs-toggle="offcanvas"]:hover {
+    color: var(--vermelho);
+}
+
+/* MENU MOBILE */
+.offcanvas-header {
+    background-color: var(--branco);
+    border-bottom: 1px solid #ddd;
+}
+
+.offcanvas-title {
+    font-size: 1.8rem; /* Nome da loja em letras grandes */
+    font-weight: bold;
+    color: var(--vermelho); /* Vermelho padrão */
+}
+
+.user-greeting {
+    font-size: 1.2rem; /* "Olá, user" maior */
+    font-weight: bold;
+    color: #333; /* Preto */
+    margin-bottom: 15px;
+}
+
+.menu-item {
+    font-size: 1rem; /* Tamanho padrão para as opções */
+    color: #333; /* Preto */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.menu-item:hover {
+    color: var(--vermelho); /* Vermelho ao passar o mouse */
+}
+
+/* Título de Categorias centralizado */
+.categorias-title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
 }
