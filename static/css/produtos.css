@@ -1,0 +1,11 @@
+@media (min-width: 768px) {
+    .sidebar-filtros {
+        position: sticky;
+        top: 20px; /* Distância do topo ao rolar */
+    }
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    transition: 0.3s;
+}

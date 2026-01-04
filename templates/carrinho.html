@@ -2,23 +2,23 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Vest Lavichy</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Vest Lavichy - Carrinho</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container my-5" style="min-height: 70vh;">
     <h2 class="mb-4">O Seu Carrinho 🛒</h2>
+
     <table class="table">
         <thead>
             <tr>
                 <th>Produto</th>
+                <th>Tamanho</th> 
                 <th>Qtd</th>
                 <th>Preço</th>
                 <th>Subtotal</th>
@@ -26,36 +26,40 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in itens %}
+            {% for item in itens_carrinho %}
             <tr>
                 <td>{{ item.produto.nome }}</td>
+                <td><span class="badge bg-dark">{{ item.tamanho }}</span></td> 
                 <td>{{ item.quantidade }}</td>
                 <td>R$ {{ item.produto.preco }}</td>
                 <td>R$ {{ item.subtotal }}</td>
                 <td>
-                    <a href="{% url 'remover_do_carrinho' item.produto.id %}" class="btn btn-sm btn-danger">Remover</a>
+                    <a href="{% url 'remover_do_carrinho' item.item_id %}" class="btn btn-sm btn-danger">Remover</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="text-center py-5">O carrinho está vazio.</td>
+                <td colspan="6" class="text-center py-5">O carrinho está vazio.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
     <div class="text-end">
         <h4 class="mb-3">Total Produtos: R$ {{ total }}</h4>
-        <a href="{% url 'pagamento' %}" class="btn btn-success btn-lg px-5 py-3 fw-bold">FINALIZAR COMPRA</a>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg px-4 py-3 fw-bold">CONTINUAR COMPRANDO</a>
+            <a href="{% url 'finalizar_compra' %}" class="btn btn-success btn-lg px-5 py-3 fw-bold">FINALIZAR COMPRA</a>
+        </div>
     </div>
 </div>
 
-<!-- FOOTER -->
-<footer>
-    <div class="container text-center">
-        <h5>Vest Lavichy</h5>
-        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
-        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
-    </div>
+<footer class="py-4 bg-light mt-5">
+    <div class="container text-center">
+        <h5>Vest Lavichy</h5>
+        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <p class="mt-2 text-muted">© 2026 Vest Lavichy • Todos os direitos reservados</p>
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

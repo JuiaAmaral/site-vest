@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Produto, ImagemProduto, Secao, Categoria
 from .models import FreteBairro
+from .models import Pedido
 
 # Registrar as categorias e seções para você conseguir cadastrá-las
 admin.site.register(Secao)
@@ -22,3 +23,11 @@ class ProdutoAdmin(admin.ModelAdmin):
         return obj.quantidade_estoque <= obj.alerta_minimo
     em_alerta.boolean = True
     em_alerta.short_description = 'Estoque Baixo'
+
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    # O que vai aparecer na lista de pedidos
+    list_display = ('id', 'usuario', 'itens_json', 'total', 'status')
+    list_filter = ('status', 'data_pedido')
+    list_editable = ('status',)
+    search_fields = ('usuario__username', 'id')

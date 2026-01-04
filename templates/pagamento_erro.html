@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Vest Lavichy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="top-bar">
+    Frete grátis em compras acima de R$199 • Parcele em até 10x sem juros
+</div>
+
+<header>
+    <div class="container d-flex justify-content-between align-items-center py-3">
+        <!-- BOTÃO MENU MOBILE -->
+        <button class="btn d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+            ☰
+        </button>
+
+        <!-- NOME DA LOJA -->
+        <div class="logo">Vest Lavichy</div>
+
+        <!-- BARRA DE BUSCA -->
+        <form action="{% url 'buscar' %}" method="GET" class="header-search d-flex">
+            <input 
+                type="text" 
+                name="q" 
+                class="form-control flex-grow-1" 
+                placeholder="O que você está procurando?"
+                value="{{ request.GET.q|default:'' }}"
+            >
+            <button type="submit" class="btn text-white ms-2" style="background-color: #b11226;">Buscar</button>
+        </form>
+
+        <!-- BOTÕES -->
+        <div class="header-icons d-none d-md-flex">
+            {% if user.is_authenticated %}
+                <span>Olá, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}">Sair</a>
+            {% else %}
+                <a href="/login">Entrar / Cadastrar</a>
+            {% endif %}
+            <a href="{% url 'carrinho_detalhe' %}">Carrinho</a>
+            <a href="#">Meus Pedidos</a>
+        </div>
+    </div>
+
+    <!-- MENU CATEGORIAS (DESKTOP) -->
+    <div class="menu-categorias py-2 d-none d-md-block">
+        <div class="container d-flex justify-content-center">
+            <a href="#">Novidades</a>
+            <a href="#">Feminino</a>
+            <a href="#">Vestidos</a>
+            <a href="#">Roupas</a>
+            <a href="#">Acessórios</a>
+            <a href="#">Promoções</a>
+        </div>
+    </div>
+</header>
+
+<!-- MENU MOBILE -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title text-uppercase" style="color: var(--vermelho); font-size: 1.8rem; font-weight: bold;">
+            Vest Lavichy
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if user.is_authenticated %}
+            <p class="user-greeting" style="font-size: 1.2rem; font-weight: bold; color: #333;">
+                Olá, {{ user.username }}
+            </p>
+        {% endif %}
+        <a href="{% url 'carrinho_detalhe' %}" class="menu-item d-block mb-2">Carrinho</a>
+        <a href="#" class="menu-item d-block mb-2">Meus Pedidos</a>
+        <a href="#" class="menu-item d-block mb-2">Novidades</a>
+        <a href="#" class="menu-item d-block mb-2">Feminino</a>
+        <a href="#" class="menu-item d-block mb-2">Vestidos</a>
+        <a href="#" class="menu-item d-block mb-2">Roupas</a>
+        <a href="#" class="menu-item d-block mb-2">Acessórios</a>
+        <a href="#" class="menu-item d-block">Promoções</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn btn-danger mt-3">Sair</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container text-center my-5 py-5">
+    <h1 style="color: #b11226; font-size: 4rem;">✖</h1>
+    <h2 class="fw-bold">Ops! Algo deu errado.</h2>
+    <p class="lead">Não conseguimos processar o seu pagamento no momento. <br> 
+    Por favor, verifique os dados do cartão ou tente novamente.</p>
+    <a href="{% url 'carrinho' %}" class="btn btn-danger btn-lg mt-4">Tentar Novamente</a>
+</div>
+
+<footer>
+    <div class="container text-center">
+        <h5>Vest Lavichy</h5>
+        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'javascript/index.js' %}"></script>
+
+</body>
+</html>

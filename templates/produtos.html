@@ -1,0 +1,124 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/produtos.css' %}">
+
+<div class="container my-5">
+    <div class="row">
+
+<aside class="col-md-3">
+    <div class="sidebar-filtros p-4 shadow-sm rounded bg-white">
+        <h5 class="fw-bold mb-4">Filtrar por</h5>
+
+        <form method="GET" action="{% url 'vitrine_produtos' %}" class="mb-4">
+            <label class="fw-bold small mb-2">O QUE VOCÊ BUSCA?</label>
+            <div class="input-group">
+                <input type="text" name="q" class="form-control form-control-sm" 
+                       placeholder="Ex: Jeans, Floral..." value="{{ request.GET.q|default:'' }}">
+                <button class="btn btn-sm btn-dark" type="submit">🔍</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <div class="mb-4">
+            <strong>Seções</strong>
+            <div class="list-group list-group-flush mt-2">
+                {% for s in secoes %}
+                <a href="?secao={{ s.id }}" 
+                   class="list-group-item list-group-item-action border-0 ps-0 {% if secao_ativa == s.id|stringformat:'s' %}fw-bold text-danger{% endif %}">
+                    {{ s.nome }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-4">
+            <strong>Categorias</strong>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                {% for cat in categorias %}
+                <a href="?categoria={{ cat.id }}" 
+                   class="btn btn-sm {% if cat_ativa == cat.id|stringformat:'s' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                    {{ cat.nome }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <a href="{% url 'vitrine_produtos' %}" class="btn btn-link btn-sm text-muted p-0">Limpar tudo</a>
+    </div>
+</aside>
+
+        <main class="col-md-9">
+            <header class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="m-0">Mostrando: 
+                    <span class="text-danger">
+                        {% if categoria_ativa %}{{ categoria_ativa }}{% else %}Todos{% endif %}
+                        {% if tipo_ativo %} > {{ tipo_ativo }}{% endif %}
+                    </span>
+                </h4>
+                <span class="text-muted">{{ produtos.count }} produtos encontrados</span>
+            </header>
+
+            <div class="row g-4">
+                {% for produto in produtos %}
+                <div class="col-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm p-2" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalProduto{{ produto.id }}">
+                        {% for img in produto.imagens.all %}
+                            {% if img.principal %}
+                                <img src="{{ img.imagem.url }}" class="card-img-top rounded" alt="{{ produto.nome }}" style="height: 250px; object-fit: cover;">
+                            {% endif %}
+                        {% endfor %}
+                        <div class="card-body text-center p-2">
+                            <h6 class="mb-1 text-truncate">{{ produto.nome }}</h6>
+                            <p class="text-danger fw-bold m-0">R$ {{ produto.preco }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modalProduto{{ produto.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-fullscreen">
+                        <div class="modal-content">
+                            <div class="modal-header border-0">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 text-center">
+                                            {% for img in produto.imagens.all %}
+                                                {% if img.principal %}
+                                                    <img src="{{ img.imagem.url }}" class="img-fluid rounded shadow" style="max-height: 80vh;">
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="col-md-6 pt-4">
+                                            <span class="badge bg-dark mb-2">Vest Lavichy Exclusive</span>
+                                            <h1 class="display-4 fw-bold">{{ produto.nome }}</h1>
+                                            <h2 class="text-danger mb-4">R$ {{ produto.preco }}</h2>
+                                            <hr>
+                                            <p class="lead">Garanta elegância e sofisticação com esta peça exclusiva da nossa coleção.</p>
+                                            <div class="d-grid gap-3 mt-5">
+                                                <a href="{% url 'adicionar_ao_carrinho' produto.id %}" class="btn btn-outline-dark btn-lg py-3">ADICIONAR AO CARRINHO</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <h5>Nenhum produto encontrado. 😥</h5>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
