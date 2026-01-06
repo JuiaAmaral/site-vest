@@ -7,7 +7,7 @@ class CadastroForm(forms.ModelForm):
     
     class Meta:
         model = PerfilUsuario
-        fields = ['telefone', 'cep', 'logradouro', 'numero', 'bairro']
+        fields = ['telefone', 'cep', 'logradouro', 'complemento', 'numero', 'bairro']
 
     def signup(self, request, user):
         perfil = self.save(commit=False)

@@ -6,61 +6,67 @@
 
 <div class="container my-5">
     <div class="row">
+        <aside class="col-md-3">
+            <form method="GET" action="{% url 'vitrine_produtos' %}" id="formFiltros">
+                <div class="sidebar-filtros p-4 shadow-sm rounded bg-white">
+                    <h5 class="fw-bold mb-4">Filtrar por</h5>
 
-<aside class="col-md-3">
-    <div class="sidebar-filtros p-4 shadow-sm rounded bg-white">
-        <h5 class="fw-bold mb-4">Filtrar por</h5>
+                    <div class="mb-4">
+                        <label class="fw-bold small mb-2">O QUE VOCÊ BUSCA?</label>
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control form-control-sm" 
+                                   placeholder="Ex: Jeans..." value="{{ request.GET.q|default:'' }}">
+                        </div>
+                    </div>
 
-        <form method="GET" action="{% url 'vitrine_produtos' %}" class="mb-4">
-            <label class="fw-bold small mb-2">O QUE VOCÊ BUSCA?</label>
-            <div class="input-group">
-                <input type="text" name="q" class="form-control form-control-sm" 
-                       placeholder="Ex: Jeans, Floral..." value="{{ request.GET.q|default:'' }}">
-                <button class="btn btn-sm btn-dark" type="submit">🔍</button>
-            </div>
-        </form>
+                    <hr>
 
-        <hr>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="novidade" id="checkNovidade" 
+                               {% if novidade_ativa %}checked{% endif %} onchange="this.form.submit()">
+                        <label class="form-check-label fw-bold text-danger" for="checkNovidade">
+                            ✨ NOVIDADES
+                        </label>
+                    </div>
 
-        <div class="mb-4">
-            <strong>Seções</strong>
-            <div class="list-group list-group-flush mt-2">
-                {% for s in secoes %}
-                <a href="?secao={{ s.id }}" 
-                   class="list-group-item list-group-item-action border-0 ps-0 {% if secao_ativa == s.id|stringformat:'s' %}fw-bold text-danger{% endif %}">
-                    {{ s.nome }}
-                </a>
-                {% endfor %}
-            </div>
-        </div>
+                    <hr>
 
-        <hr>
+                    <div class="mb-4">
+                        <strong>Seções</strong>
+                        <div class="mt-2">
+                            {% for s in secoes %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="secao" value="{{ s.id }}" id="secao{{ s.id }}"
+                                       {% if s.id|stringformat:"i" in secoes_ativas %}checked{% endif %} onchange="this.form.submit()">
+                                <label class="form-check-label" for="secao{{ s.id }}">{{ s.nome }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        <div class="mb-4">
-            <strong>Categorias</strong>
-            <div class="d-flex flex-wrap gap-2 mt-2">
-                {% for cat in categorias %}
-                <a href="?categoria={{ cat.id }}" 
-                   class="btn btn-sm {% if cat_ativa == cat.id|stringformat:'s' %}btn-dark{% else %}btn-outline-dark{% endif %}">
-                    {{ cat.nome }}
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <a href="{% url 'vitrine_produtos' %}" class="btn btn-link btn-sm text-muted p-0">Limpar tudo</a>
-    </div>
-</aside>
+                    <hr>
+
+                    <div class="mb-4">
+                        <strong>Categorias</strong>
+                        <div class="mt-2">
+                            {% for cat in categorias %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categoria" value="{{ cat.id }}" id="cat{{ cat.id }}"
+                                       {% if cat.id|stringformat:"i" in cats_ativas %}checked{% endif %} onchange="this.form.submit()">
+                                <label class="form-check-label" for="cat{{ cat.id }}">{{ cat.nome }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <a href="{% url 'vitrine_produtos' %}" class="btn btn-dark btn-sm w-100 mt-3">Limpar Filtros</a>
+                </div>
+            </form> 
+        </aside>
 
         <main class="col-md-9">
             <header class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Mostrando: 
-                    <span class="text-danger">
-                        {% if categoria_ativa %}{{ categoria_ativa }}{% else %}Todos{% endif %}
-                        {% if tipo_ativo %} > {{ tipo_ativo }}{% endif %}
-                    </span>
-                </h4>
-                <span class="text-muted">{{ produtos.count }} produtos encontrados</span>
+                <h4 class="m-0">Vitrine <span class="text-muted small">({{ produtos.count }} itens)</span></h4>
             </header>
 
             <div class="row g-4">
@@ -83,26 +89,41 @@
                     <div class="modal-dialog modal-fullscreen">
                         <div class="modal-content">
                             <div class="modal-header border-0">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
                                 <div class="container">
                                     <div class="row align-items-center">
                                         <div class="col-md-6 text-center">
-                                            {% for img in produto.imagens.all %}
-                                                {% if img.principal %}
-                                                    <img src="{{ img.imagem.url }}" class="img-fluid rounded shadow" style="max-height: 80vh;">
-                                                {% endif %}
-                                            {% endfor %}
+                                            {% with img_p=produto.imagens.all|first %}
+                                                <img src="{{ img_p.imagem.url }}" class="img-fluid rounded shadow" style="max-height: 80vh;">
+                                            {% endwith %}
                                         </div>
                                         <div class="col-md-6 pt-4">
                                             <span class="badge bg-dark mb-2">Vest Lavichy Exclusive</span>
-                                            <h1 class="display-4 fw-bold">{{ produto.nome }}</h1>
+                                            <h1 class="display-5 fw-bold">{{ produto.nome }}</h1>
                                             <h2 class="text-danger mb-4">R$ {{ produto.preco }}</h2>
                                             <hr>
-                                            <p class="lead">Garanta elegância e sofisticação com esta peça exclusiva da nossa coleção.</p>
+                                            
+                                            <div class="produto-descricao mb-4">
+                                                <h6 class="fw-bold">Descrição:</h6>
+                                                <p>{{ produto.descricao|linebreaks }}</p>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold">Selecione o Tamanho:</h6>
+                                                <div class="d-flex gap-2">
+                                                    {% for t in produto.get_tamanhos_list %}
+                                                        <input type="radio" class="btn-check" name="tam_compra_{{produto.id}}" id="t_compra_{{produto.id}}_{{t}}" value="{{t}}">
+                                                        <label class="btn btn-outline-dark" for="t_compra_{{produto.id}}_{{t}}">{{t}}</label>
+                                                    {% empty %}
+                                                        <p class="text-muted small">Tamanho Único</p>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
                                             <div class="d-grid gap-3 mt-5">
-                                                <a href="{% url 'adicionar_ao_carrinho' produto.id %}" class="btn btn-outline-dark btn-lg py-3">ADICIONAR AO CARRINHO</a>
+                                                <button type="button" onclick="addCarrinhoComTamanho('{{ produto.id }}')" class="btn btn-dark btn-lg py-3">ADICIONAR AO CARRINHO</button>
                                             </div>
                                         </div>
                                     </div>
@@ -111,14 +132,22 @@
                         </div>
                     </div>
                 </div>
-
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <h5>Nenhum produto encontrado. 😥</h5>
-                </div>
                 {% endfor %}
             </div>
         </main>
     </div>
 </div>
+
+<script>
+function addCarrinhoComTamanho(prodId) {
+    const radio = document.querySelector(`input[name="tam_compra_${prodId}"]:checked`);
+    
+    if (!radio) {
+        alert("Por favor, selecione um tamanho antes de adicionar ao carrinho.");
+        return;
+    }
+    const url = "/carrinho/add/" + prodId + "/?tamanho=" + radio.value;
+    window.location.href = url;
+}
+</script>
 {% endblock %}

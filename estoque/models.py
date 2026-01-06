@@ -3,10 +3,24 @@ from django.contrib.auth.models import User
 
 class Secao(models.Model):
     nome = models.CharField(max_length=50) 
+    imagem = models.ImageField(upload_to='icones_categorias/', blank=True, null=True, verbose_name="Ícone da Categoria")
     def __str__(self): return self.nome
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=50) 
+    def __str__(self): return self.nome
+
+class Banner(models.Model):
+    titulo = models.CharField(max_length=100, help_text="Apenas para identificação")
+    imagem = models.ImageField(upload_to='banners/', verbose_name="Imagem do Banner")
+    ativo = models.BooleanField(default=True)
+    def __str__(self): return self.titulo
+
+class DestaqueLuxo(models.Model):
+    nome = models.CharField(max_length=50, verbose_name="Título (Ex: Vestido Elegante)")
+    imagem = models.ImageField(upload_to='luxo/', verbose_name="Foto do Card")
+    produto_associado = models.ForeignKey('Produto', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Se quiser que a vitrine direcione para um produto, selecione aqui produto desejado.")
+
     def __str__(self): return self.nome
 
 class Produto(models.Model):
@@ -17,17 +31,20 @@ class Produto(models.Model):
     alerta_minimo = models.IntegerField(default=5, verbose_name="Alerta de Reposição")
     secao = models.ForeignKey(Secao, on_delete=models.CASCADE, verbose_name="Seção do Produto", null=True, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, verbose_name="Categoria do Produto", null=True, blank=True)
+    novidade = models.BooleanField(default=False, verbose_name="É novidade?")
+    destaque = models.BooleanField(default=False, verbose_name="Colocar em destaque na tela inicial?")
     tamanhos_disponiveis = models.CharField(
         max_length=50, 
         verbose_name="Tamanhos Disponíveis", 
-        help_text="Ex: P, M, G ou 38, 40, 42",
+        help_text="Ex: P, M, G ou 38, 40, 42, Único",
         null=True, 
         blank=True
     )
     def __str__(self): return self.nome
     def get_tamanhos_list(self):
         if self.tamanhos_disponiveis:
-            return [t.strip() for t in self.tamanhos_disponiveis.split(',')]
+        # Divide por vírgula, remove espaços extras e filtra itens vazios
+            return [t.strip() for t in self.tamanhos_disponiveis.split(',') if t.strip()]
         return []
 
 class ImagemProduto(models.Model):
@@ -40,6 +57,7 @@ class PerfilUsuario(models.Model):
     telefone = models.CharField(max_length=15)
     cep = models.CharField(max_length=9)
     logradouro = models.CharField(max_length=255)
+    complemento = models.CharField(max_length=255, blank=True, null=True)
     numero = models.CharField(max_length=10)
     bairro = models.CharField(max_length=100)
     cidade = models.CharField(max_length=100, default="Rio de Janeiro")
@@ -62,13 +80,11 @@ class Pedido(models.Model):
         ('entregue', 'Pedido Entregue'),
         ('cancelado', 'Pedido Cancelado'),
     )
-
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     data_pedido = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
-    itens_json = models.TextField() # Guardaremos os nomes dos produtos aqui
+    itens_json = models.TextField() 
     id_pagamento_mp = models.CharField(max_length=100, blank=True, null=True)
 
-    def __str__(self):
-        return f"Pedido {self.id} - {self.usuario.username}"
+    def __str__(self): return f"Pedido {self.id} - {self.usuario.username}"

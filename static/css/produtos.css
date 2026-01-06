@@ -9,3 +9,32 @@
     transform: translateY(-5px);
     transition: 0.3s;
 }
+
+/* Estilização dos botões de tamanho */
+.btn-check + .btn-outline-dark {
+    border: 1px solid #333;
+    color: #333;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+/* Quando o botão é selecionado (Checked) */
+.btn-check:checked + .btn-outline-dark {
+    background-color: #b11226 !important; /* Vermelho da marca */
+    border-color: #b11226 !important;
+    color: #fff !important;
+    transform: scale(1.05); /* Leve aumento para destaque */
+}
+
+/* Efeito ao passar o mouse */
+.btn-check + .btn-outline-dark:hover {
+    background-color: #f8f8f8;
+    border-color: #b11226;
+    color: #b11226;
+}
+
+/* Ajuste para o container dos tamanhos */
+.gap-2 {
+    gap: 0.5rem !important;
+}

@@ -38,3 +38,13 @@ function adicionarComTamanho(produtoId) {
     // Redireciona para a sua view do Django
     window.location.href = "/carrinho/add/" + produtoId + "/?tamanho=" + tamanho;
 }
+
+function scrollSlider(direction) {
+    const row = document.getElementById('destaqueRow');
+    const scrollAmount = row.clientWidth * 0.8; // Rola 80% da tela visível
+    if(direction === 'left') {
+        row.scrollLeft -= scrollAmount;
+    } else {
+        row.scrollLeft += scrollAmount;
+    }
+}

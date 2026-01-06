@@ -7,60 +7,97 @@
     <title>Cadastro - Vest Lavichy</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/cadastro.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Ajustes finos para garantir centralização total */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .step-2 { display: none; }
+        .alert { font-size: 0.85rem; }
+    </style>
 </head>
 <body>
 
 <div class="card-cadastro">
     <div class="logo-cadastro">Vest Lavichy</div>
-    <h5 class="text-center mb-4">Crie sua conta</h5>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
-<form method="POST">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label class="form-label">Nome de Usuário</label>
-        <input type="text" name="usuario" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">E-mail</label>
-        <input type="email" name="email" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Senha</label>
-        <input type="password" name="senha" class="form-control" required>
-    </div>
+    <form method="POST" id="formCadastro">
+        {% csrf_token %}
 
-    <hr>
-    <h6 class="text-muted">Dados de Entrega (Apenas RJ)</h6>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label">CEP</label>
-            <input type="text" name="cep" id="id_cep" class="form-control" placeholder="00000-000" required>
+        <div id="etapa1">
+            <h5 class="text-center mb-4">Crie sua conta</h5>
+            <div class="mb-3">
+                <label class="form-label">Nome de Usuário</label>
+                <input type="text" name="usuario" id="user" class="form-control" required value="{{ request.POST.usuario }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input type="email" name="email" id="email" class="form-control" required value="{{ request.POST.email }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Senha</label>
+                <input type="password" name="senha" id="senha" class="form-control" required>
+            </div>
+            <button type="button" onclick="proximoPasso()" class="btn btn-principal w-100 mt-2">PRÓXIMO</button>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Telefone</label>
-            <input type="text" name="telefone" class="form-control" placeholder="(21) 99999-9999" required>
-        </div>
-    </div>
 
-    <div class="mb-3">
-        <label class="form-label">Logradouro (Rua)</label>
-        <input type="text" name="logradouro" id="id_logradouro" class="form-control" readonly>
-    </div>
+        <div id="etapa2" class="step-2">
+            <h5 class="text-center mb-4">Dados de Entrega</h5>
+            <h6 class="text-muted small text-center mb-3">Enviamos apenas para o Rio de Janeiro</h6>
 
-    <div class="row">
-        <div class="col-6 mb-3">
-            <label class="form-label">Número</label>
-            <input type="text" name="numero" class="form-control" required>
-        </div>
-        <div class="col-6 mb-3">
-            <label class="form-label">Bairro</label>
-            <input type="text" name="bairro" id="id_bairro" class="form-control" readonly>
-        </div>
-    </div>
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label class="form-label">CEP</label>
+                    <input type="text" name="cep" id="id_cep" class="form-control" placeholder="00000-000" required value="{{ request.POST.cep }}">
+                </div>
+                <div class="col-6 mb-3">
+                    <label class="form-label">Telefone</label>
+                    <input type="text" name="telefone" class="form-control" placeholder="(21) 99999-9999" required value="{{ request.POST.telefone }}">
+                </div>
+            </div>
 
-    <button type="submit" class="btn btn-principal w-100 mt-2">CADASTRAR E CONTINUAR</button>
-</form>
+            <div class="mb-3">
+                <label class="form-label">Logradouro (Rua)</label>
+                <input type="text" name="logradouro" id="id_logradouro" class="form-control" readonly value="{{ request.POST.logradouro }}">
+            </div>
+
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label class="form-label">Número</label>
+                    <input type="text" name="numero" class="form-control" required value="{{ request.POST.numero }}">
+                </div>
+                <div class="col-6 mb-3">
+                    <label class="form-label">Bairro</label>
+                    <input type="text" name="bairro" id="id_bairro" class="form-control" readonly value="{{ request.POST.bairro }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Complemento (Opcional)</label>
+                <input type="text" name="complemento" class="form-control" placeholder="Apto, Bloco..." value="{{ request.POST.complemento }}">
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="button" onclick="passoAnterior()" class="btn btn-outline-secondary w-50">VOLTAR</button>
+                <button type="submit" class="btn btn-principal w-50">FINALIZAR</button>
+            </div>
+        </div>
+    </form>
 
     <div class="text-center mt-4">
         <span class="text-muted">Já tem uma conta?</span> <br>
@@ -68,36 +105,59 @@
     </div>
 </div>
 
-<script>
-    document.getElementById('id_cep').addEventListener('blur', function() {
-        let cep = this.value.replace(/\D/g, '');
-        if (cep !== "") {
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.erro) {
-                        document.getElementById('id_logradouro').value = data.logradouro;
-                        document.getElementById('id_bairro').value = data.bairro;
-                        if(data.uf !== "RJ") alert("Atenção: Entregamos apenas no RJ!");
-                    }
-                });
-        }
-    });
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-// pra evitar erro de digitação do cliente no bairro 
+<script>
+async function proximoPasso() {
+    const userField = document.getElementById('user');
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const usuario = userField.value;
+
+    if(usuario && email && senha) {
+        try {
+            const response = await fetch(`/verificar-usuario/?usuario=${usuario}`);
+            const data = await response.json();
+
+            if (data.is_taken) {
+                alert("Este nome de usuário já está em uso.");
+                userField.focus();
+            } else {
+                document.getElementById('etapa1').style.display = 'none';
+                document.getElementById('etapa2').style.display = 'block';
+            }
+        } catch (error) {
+            document.getElementById('etapa1').style.display = 'none';
+            document.getElementById('etapa2').style.display = 'block';
+        }
+    } else {
+        alert("Por favor, preencha todos os campos.");
+    }
+}
+
+function passoAnterior() {
+    document.getElementById('etapa1').style.display = 'block';
+    document.getElementById('etapa2').style.display = 'none';
+}
+
 document.getElementById('id_cep').addEventListener('blur', function() {
     let cep = this.value.replace(/\D/g, '');
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then(res => res.json())
-        .then(data => {
-            if (!data.erro) {
-                document.getElementById('id_logradouro').value = data.logradouro;
-                document.getElementById('id_bairro').value = data.bairro;
-                document.getElementById('id_cidade').value = data.localidade;
-            }
-        });
+    if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.erro) {
+                    if(data.uf !== "RJ") {
+                        alert("Entregamos apenas no RJ!");
+                        this.value = "";
+                        return;
+                    }
+                    document.getElementById('id_logradouro').value = data.logradouro;
+                    document.getElementById('id_bairro').value = data.bairro;
+                }
+            });
+    }
 });
 </script>
-
 </body>
 </html>
