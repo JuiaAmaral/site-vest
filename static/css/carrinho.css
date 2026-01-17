@@ -1,0 +1,65 @@
+/* ==========================
+   CARRINHO – MOBILE FIRST
+========================== */
+
+/* Ajustes gerais */
+.cart-table th,
+.cart-table td {
+  vertical-align: middle;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  h2 {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  /* Esconde o cabeçalho da tabela */
+  .cart-table thead {
+    display: none;
+  }
+
+  /* Cada item vira um card */
+  .cart-table tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff;
+  }
+
+  .cart-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border: none;
+  }
+
+  .cart-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+  }
+
+  /* Botão remover */
+  .cart-table a.btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* Total + botões */
+  .text-end {
+    text-align: center !important;
+  }
+
+  .text-end .d-flex {
+    flex-direction: column;
+  }
+
+  .text-end .btn {
+    width: 100%;
+  }
+}

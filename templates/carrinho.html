@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vest Lavichy - Carrinho</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/carrinho.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -22,46 +22,86 @@
         {% endfor %}
     {% endif %}
 
-    <table class="table align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Produto</th>
-                <th>Tamanho</th> 
-                <th>Qtd</th>
-                <th>Preço</th>
-                <th>Subtotal</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in itens_carrinho %}
-            <tr>
-                <td>{{ item.produto.nome }}</td>
-                <td><span class="badge bg-dark">{{ item.tamanho }}</span></td> 
-                <td>{{ item.quantidade }}</td>
-                <td>R$ {{ item.produto.preco }}</td>
-                <td>R$ {{ item.subtotal }}</td>
-                <td>
-                    <a href="{% url 'remover_do_carrinho' item.item_id %}" class="btn btn-sm btn-danger">Remover</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center py-5">O seu carrinho está vazio.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- TABELA RESPONSIVA -->
+    <div class="table-responsive">
+        <table class="table align-middle cart-table">
+            <thead class="table-light">
+                <tr>
+                    <th>Produto</th>
+                    <th>Tamanho</th> 
+                    <th>Qtd</th>
+                    <th>Preço</th>
+                    <th>Subtotal</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in itens_carrinho %}
+                <tr>
+                    <td data-label="Produto">
+                        {{ item.produto.nome }}
+                    </td>
+
+                    <td data-label="Tamanho">
+                        <span class="badge bg-dark">
+                            {{ item.tamanho }}
+                        </span>
+                    </td> 
+
+                    <td data-label="Qtd">
+                        {{ item.quantidade }}
+                    </td>
+
+                    <td data-label="Preço">
+                        R$ {{ item.produto.preco }}
+                    </td>
+
+                    <td data-label="Subtotal">
+                        R$ {{ item.subtotal }}
+                    </td>
+
+                    <td data-label="Ações">
+                        <a href="{% url 'remover_do_carrinho' item.item_id %}"
+                           class="btn btn-sm btn-danger w-100">
+                            Remover
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        O seu carrinho está vazio.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <div class="text-end mt-4">
-        <h4 class="mb-3">Total Produtos: <span class="text-success">R$ {{ total }}</span></h4>
+        <h4 class="mb-3">
+            Total Produtos:
+            <span class="text-success">
+                R$ {{ total }}
+            </span>
+        </h4>
+
         <div class="d-flex justify-content-end gap-2">
-            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg px-4 fw-bold">CONTINUAR COMPRANDO</a>
-            
+            <a href="{% url 'index' %}"
+               class="btn btn-outline-secondary btn-lg px-4 fw-bold">
+                CONTINUAR COMPRANDO
+            </a>
+
             {% if user.is_authenticated %}
-                <a href="{% url 'finalizar_compra' %}" class="btn btn-success btn-lg px-5 fw-bold">FINALIZAR COMPRA</a>
+                <a href="{% url 'finalizar_compra' %}"
+                   class="btn btn-success btn-lg px-5 fw-bold">
+                    FINALIZAR COMPRA
+                </a>
             {% else %}
-                <a href="{% url 'login' %}?next={% url 'carrinho_detalhe' %}" class="btn btn-warning btn-lg px-5 fw-bold">FAÇA LOGIN PARA FINALIZAR</a>
+                <a href="{% url 'login' %}?next={% url 'carrinho_detalhe' %}"
+                   class="btn btn-warning btn-lg px-5 fw-bold">
+                    FAÇA LOGIN PARA FINALIZAR
+                </a>
             {% endif %}
         </div>
     </div>
@@ -71,7 +111,9 @@
     <div class="container text-center">
         <h5>Vest Lavichy</h5>
         <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
-        <p class="mt-2 text-muted">© 2026 Vest Lavichy • Todos os direitos reservados</p>
+        <p class="mt-2 text-muted">
+            © 2026 Vest Lavichy • Todos os direitos reservados
+        </p>
     </div>
 </footer>
 

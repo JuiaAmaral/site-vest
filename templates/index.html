@@ -21,7 +21,7 @@
             ☰
         </button>
 
-        <a href="{% url 'index' %}" class="logo text-decoration-none">Vest Lavichy</a>
+        <a href="{% url 'index' %}" class="logo text-decoration-none" style="display: flex; justify-content: center"><img src="../media/icones_categorias/VestLavichy.png"></a>
 
         <form action="{% url 'buscar' %}" method="GET" class="header-search d-flex">
             <input type="text" name="q" class="form-control flex-grow-1" placeholder="O que você está procurando?" value="{{ termo|default:'' }}">
@@ -202,6 +202,9 @@
     <div class="container">
         <h5>Vest Lavichy</h5>
         <p>Moda feminina inspirada em elegância e sofisticação</p>
+        <a href="https://wa.me/5521977595943" target="_blank"><button class="btn-icon"><img src="../media/icones_categorias/iconZap.jpg" alt="Botão"></button></a>
+        <a href="https://www.instagram.com/vest_lavichy" target="_blank"><button class="btn-icon"><img src="../media/icones_categorias/iconInsta.jpg" alt="Botão"></button></a>
+
         <p class="mt-2 small text-muted">© 2025 Vest Lavichy • Todos os direitos reservados</p>
     </div>
 </footer>
