@@ -5,87 +5,171 @@
     <meta charset="UTF-8">
     <title>{{ produto.nome }} - Vest Lavichy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Garantindo que o botão de tamanho selecionado fique vermelho */
-        .btn-check:checked + .btn-outline-dark {
-            background-color: #b11226 !important;
-            border-color: #b11226 !important;
-            color: #fff !important;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/produto_detalhe.css' %}">
 </head>
 <body>
 
-<header>
-    <div class="container py-3">
-        <a href="{% url 'index' %}" class="logo" style="text-decoration: none; font-size: 2rem; font-weight: bold; color: #000;">Vest Lavichy</a>
+<header class="checkout-header shadow-sm bg-white position-relative">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+
+        <div class="d-flex align-items-center">
+            <button class="btn d-md-none me-2" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+                ☰
+            </button>
+
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'img/icones_categorias/VestLavichy.png' %}"
+                     alt="Logo" style="max-height: 45px;">
+            </a>
+        </div>
+
+        <div class="brand-wrapper">
+            <span class="brand-center">Vest Lavichy</span>
+        </div>
+
+        <!-- HEADER DESKTOP -->
+        <div class="header-icons d-none d-md-flex gap-3 align-items-center">
+            {% if user.is_authenticated %}
+                <span class="small text-muted">Olá, {{ user.username }}</span>
+                <a href="{% url 'meus_pedidos' %}" class="text-decoration-none text-dark small">Meus Pedidos</a>
+                <a href="{% url 'carrinho_detalhe' %}" class="text-decoration-none text-dark small">Carrinho</a>
+                <a href="{% url 'logout' %}" class="text-decoration-none text-dark small">Sair</a>
+            {% else %}
+                <a href="/login" class="text-decoration-none text-dark small">Entrar</a>
+            {% endif %}
+        </div>
+
     </div>
 </header>
 
+<!-- OFFCANVAS MOBILE (FORA DO HEADER-ICONS) -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body">
+
+        {% if user.is_authenticated %}
+            <p class="fw-bold mb-3">Olá, {{ user.username }} 👋</p>
+            <a href="{% url 'logout' %}" class="menu-item d-block mb-3 text-danger">Sair</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="menu-item d-block mb-3 fw-bold">
+                Entrar / Cadastrar
+            </a>
+        {% endif %}
+
+        <hr>
+
+        <a href="{% url 'vitrine_produtos' %}?novidade=true"
+           class="menu-item d-block mb-2 fw-bold"
+           style="color: #b11226;">
+            ✨ Novidades
+        </a>
+
+        {% for s in secoes %}
+            <a href="{% url 'vitrine_produtos' %}?secao={{ s.nome }}"
+               class="menu-item d-block mb-2">
+                {{ s.nome }}
+            </a>
+        {% endfor %}
+
+        <hr>
+
+        <a href="{% url 'carrinho_detalhe' %}" class="menu-item d-block mb-2">🛒 Carrinho</a>
+        <a href="{% url 'meus_pedidos' %}" class="menu-item d-block mb-2">📦 Meus Pedidos</a>
+
+    </div>
+</div>
+
 <main class="container my-5">
     <div class="row">
-        <div class="col-md-6 text-center">
-            {% for img in produto.imagens.all %}
-                {% if img.principal %}
-                    <img src="{{ img.imagem.url }}" class="img-fluid rounded shadow-sm" alt="{{ produto.nome }}" style="max-height: 500px; width: 100%; object-fit: cover;">
+
+        <div class="col-md-6">
+            <div id="carouselProduto" class="carousel slide" data-bs-touch="true" data-bs-interval="false">
+                <div class="carousel-inner rounded shadow-sm">
+                    {% for img in produto.imagens.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ img.imagem.url }}" class="d-block w-100"
+                                 alt="{{ produto.nome }}"
+                                 style="max-height: 500px; object-fit: cover;">
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if produto.imagens.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselProduto" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselProduto" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
                 {% endif %}
-            {% endfor %}
-            <div class="mt-3 d-flex justify-content-center gap-2">
-                {% for img in produto.imagens.all %}
-                    <img src="{{ img.imagem.url }}" width="80" height="80" class="rounded border" style="object-fit: cover; cursor: pointer;">
-                {% endfor %}
             </div>
         </div>
 
         <div class="col-md-6">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-                    <li class="breadcrumb-item active">{{ produto.nome }}</li>
-                </ol>
-            </nav>
-
             <h1 class="display-5 fw-bold">{{ produto.nome }}</h1>
             <h3 class="text-danger mb-4">R$ {{ produto.preco }}</h3>
-            
+
             <div class="mb-4">
                 <h6 class="fw-bold">Descrição:</h6>
                 <p class="text-muted">{{ produto.descricao|linebreaks }}</p>
             </div>
 
-            <form action="/carrinho/add/{{ produto.id }}/" method="GET" class="mt-4" id="formProdutoDetalhe">
+            <form action="/carrinho/add/{{ produto.id }}/" method="GET" class="mt-4">
+
                 <div class="mb-4">
                     <label class="form-label fw-bold d-block mb-3">SELECIONE O TAMANHO:</label>
-                        <div class="d-flex gap-2 flex-wrap">
-                            {% for t in produto.get_tamanhos_list %} <input type="radio" class="btn-check" name="tamanho" id="tam_{{ t }}" value="{{ t }}" required>
-                                <label class="btn btn-outline-dark px-4 py-2" for="tam_{{ t }}">
-                                {{ t }}
-                            </label>
-                            {% empty %}
-                        <input type="radio" class="btn-check" name="tamanho" id="tam_unico" value="Único" checked required>
-                                <label class="btn btn-outline-dark px-4 py-2" for="tam_unico">Único</label>
-                            {% endfor %}
-                        </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        {% for t in produto.get_tamanhos_list %}
+                            <input type="radio" class="btn-check" name="tamanho" id="tam_{{ t }}" value="{{ t }}" required>
+                            <label class="btn btn-outline-dark px-4 py-2" for="tam_{{ t }}">{{ t }}</label>
+                        {% empty %}
+                            <input type="radio" class="btn-check" name="tamanho" id="tam_unico" value="Único" checked required>
+                            <label class="btn btn-outline-dark px-4 py-2" for="tam_unico">Único</label>
+                        {% endfor %}
                     </div>
+                </div>
 
-                <button type="submit" class="btn btn-lg text-white w-100 py-3 shadow-sm" style="background-color: #b11226; border: none;">
-                ADICIONAR AO CARRINHO 🛒
-                </button>   
+                <div class="mb-4">
+                    <label class="form-label fw-bold d-block mb-3">SELECIONE A COR:</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        {% for c in produto.get_cores_list %}
+                            <input type="radio" class="btn-check" name="cor" id="cor_{{ c }}" value="{{ c }}" required>
+                            <label class="btn btn-outline-dark px-4 py-2" for="cor_{{ c }}">{{ c }}</label>
+                        {% empty %}
+                            <input type="radio" class="btn-check" name="cor" id="cor_unica" value="Única" checked required>
+                            <label class="btn btn-outline-dark px-4 py-2" for="cor_unica">Única</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-lg text-white w-100 py-3 shadow-sm"
+                        style="background-color: #b11226; border: none;">
+                    ADICIONAR AO CARRINHO 🛒
+                </button>
             </form>
 
             <div class="mt-4 p-3 bg-light border rounded">
-                <small>🚚 <b>Frete grátis</b> para compras acima de R$199</small><br>
-                <small>💳 Parcelamento em até 10x sem juros</small>
+                <small>💳 Pagamento seguro via Mercado Pago!</small>
             </div>
         </div>
     </div>
 </main>
 
-<footer class="py-5 bg-light border-top mt-5 text-center">
-    <div class="container">
-        <p>© 2026 Vest Lavichy • Todos os direitos reservados</p>
+<footer class="py-4 bg-light mt-5">
+    <div class="container text-center">
+        <h5>Vest Lavichy</h5>
+        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <a href="https://wa.me/5521977595943" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconZap.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <a href="https://www.instagram.com/vest_lavichy" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconInsta.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <p class="mt-2 text-muted">© 2026 Vest Lavichy • Todos os direitos reservados</p>
     </div>
 </footer>
 

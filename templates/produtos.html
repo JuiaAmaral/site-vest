@@ -4,7 +4,7 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/produtos.css' %}">
 
-<div class="container my-5">
+<div class="container-fluid my-4 px-3">
     <div class="row">
         <aside class="col-md-3">
             <form method="GET" action="{% url 'vitrine_produtos' %}" id="formFiltros">
@@ -68,86 +68,35 @@
             <header class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Vitrine <span class="text-muted small">({{ produtos.count }} itens)</span></h4>
             </header>
+    <div class="row g-4">
+    {% for produto in produtos %}
+    <div class="col-6 col-lg-4">
 
-            <div class="row g-4">
-                {% for produto in produtos %}
-                <div class="col-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm p-2" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalProduto{{ produto.id }}">
-                        {% for img in produto.imagens.all %}
-                            {% if img.principal %}
-                                <img src="{{ img.imagem.url }}" class="card-img-top rounded" alt="{{ produto.nome }}" style="height: 250px; object-fit: cover;">
-                            {% endif %}
-                        {% endfor %}
-                        <div class="card-body text-center p-2">
-                            <h6 class="mb-1 text-truncate">{{ produto.nome }}</h6>
-                            <p class="text-danger fw-bold m-0">R$ {{ produto.preco }}</p>
-                        </div>
-                    </div>
+        <a href="{% url 'produto_detalhe' produto_id=produto.id %}"
+           class="text-decoration-none text-dark">
+
+            <div class="card h-100 border-0 shadow-sm p-2 produto-card">
+
+                {% with produto.imagem_principal as img %}
+                    {% if img %}
+                        <img src="{{ img.imagem.url }}"
+                        class="card-img-top rounded"
+                             alt="{{ produto.nome }}"
+                             style="height: 250px; object-fit: cover;">
+                    {% endif %}
+                {% endwith %}  
+
+                <div class="card-body text-center p-2">
+                    <h6 class="mb-1 text-truncate">{{ produto.nome }}</h6>
+                    <p class="text-danger fw-bold m-0">R$ {{ produto.preco }}</p>
                 </div>
 
-                <div class="modal fade" id="modalProduto{{ produto.id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-fullscreen">
-                        <div class="modal-content">
-                            <div class="modal-header border-0">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="container">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-6 text-center">
-                                            {% with img_p=produto.imagens.all|first %}
-                                                <img src="{{ img_p.imagem.url }}" class="img-fluid rounded shadow" style="max-height: 80vh;">
-                                            {% endwith %}
-                                        </div>
-                                        <div class="col-md-6 pt-4">
-                                            <span class="badge bg-dark mb-2">Vest Lavichy Exclusive</span>
-                                            <h1 class="display-5 fw-bold">{{ produto.nome }}</h1>
-                                            <h2 class="text-danger mb-4">R$ {{ produto.preco }}</h2>
-                                            <hr>
-                                            
-                                            <div class="produto-descricao mb-4">
-                                                <h6 class="fw-bold">Descrição:</h6>
-                                                <p>{{ produto.descricao|linebreaks }}</p>
-                                            </div>
-
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold">Selecione o Tamanho:</h6>
-                                                <div class="d-flex gap-2">
-                                                    {% for t in produto.get_tamanhos_list %}
-                                                        <input type="radio" class="btn-check" name="tam_compra_{{produto.id}}" id="t_compra_{{produto.id}}_{{t}}" value="{{t}}">
-                                                        <label class="btn btn-outline-dark" for="t_compra_{{produto.id}}_{{t}}">{{t}}</label>
-                                                    {% empty %}
-                                                        <p class="text-muted small">Tamanho Único</p>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-
-                                            <div class="d-grid gap-3 mt-5">
-                                                <button type="button" onclick="addCarrinhoComTamanho('{{ produto.id }}')" class="btn btn-dark btn-lg py-3">ADICIONAR AO CARRINHO</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
             </div>
-        </main>
-    </div>
-</div>
+        </a>
 
-<script>
-function addCarrinhoComTamanho(prodId) {
-    const radio = document.querySelector(`input[name="tam_compra_${prodId}"]:checked`);
-    
-    if (!radio) {
-        alert("Por favor, selecione um tamanho antes de adicionar ao carrinho.");
-        return;
-    }
-    const url = "/carrinho/add/" + prodId + "/?tamanho=" + radio.value;
-    window.location.href = url;
-}
-</script>
+    </div>
+    {% endfor %}
+    </div>
+        </main>
+</div>
 {% endblock %}

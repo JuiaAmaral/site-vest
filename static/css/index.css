@@ -79,17 +79,18 @@ header {
 
 .categorias-scroll {
     display: flex;
-    justify-content: center;
-    gap: 30px; 
-    overflow-x: auto;
-    padding: 20px 0;
+    gap: 20px;
+    justify-content: center; /* 🔴 ISSO resolve o desktop */
+    padding: 20px 15px;
 }
+
 
 /* Container do item (Link + Texto) */
 .categoria-item {
     transition: all 0.3s ease;
     display: inline-block;
     text-align: center;
+    flex: 0 0 auto;
 }
 
 /* O círculo da imagem */
@@ -145,31 +146,42 @@ header {
 }
 
 /* 6. DESTAQUES E SETAS */
+
+.section-destaque {
+    position: relative;
+    overflow: hidden;
+}
+
 .position-relative {
     position: relative;
 }
 
 /* Setas invisíveis */
 
-.section-destaque {
-    position: relative;
-    padding: 0 45px; /* Espaço para as setas nas extremidades */
+.btn-seta.seta-esq {
+    left: 0;
 }
+
+.btn-seta.seta-dir {
+    right: 0;
+}
+
 .btn-seta {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0); /* Sombra preta leve do banner */
-    border: none;
+    background-color: rgba(0, 0, 0, 0); 
     width: 45px;
-    height: 15%; /* Altura proporcional como no banner */
+    height: 15%; 
     min-height: 80px;
-    z-index: 10;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: background-color 0.3s;
     cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    z-index: 10;
 }
 
 .btn-seta:hover {
@@ -181,6 +193,11 @@ header {
     width: 2rem;
     height: 2rem;
 }
+
+.section-moda {
+    position: relative;
+}
+
 
 /* 7. CARDS E UTILITÁRIOS */
 
@@ -255,7 +272,10 @@ header {
 
     .categorias-scroll {
         justify-content: flex-start;
-        padding-left: 15px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -297,3 +317,11 @@ footer {
     gap: 0.5rem !important;
 }
 
+.categorias-scroll {
+    scrollbar-width: none;      
+    -ms-overflow-style: none;   
+}
+
+.categorias-scroll::-webkit-scrollbar {
+    display: none;             
+}

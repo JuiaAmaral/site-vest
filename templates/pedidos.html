@@ -3,43 +3,116 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Meus Pedidos - Vest Lavichy</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pedidos.css' %}">
 </head>
+
+<header class="checkout-header shadow-sm bg-white position-relative">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+
+        <div class="d-flex align-items-center">
+            <button class="btn d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+                ☰
+            </button>
+
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'img/icones_categorias/VestLavichy.png' %}" alt="Logo" style="max-height: 45px;">
+            </a>
+        </div>
+
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <span class="brand-center">Vest Lavichy</span>
+        </div>
+
+        <div class="header-icons d-flex gap-3 align-items-center">
+            {% if user.is_authenticated %}
+                <span class="small text-muted d-none d-sm-inline">
+                    Olá, {{ user.username }}
+                </span>
+                <a href="{% url 'logout' %}" class="text-decoration-none text-dark small">
+                    Sair
+                </a>
+            {% else %}
+                <a href="/login" class="text-decoration-none text-dark small">
+                    Entrar / Cadastrar
+                </a>
+            {% endif %}
+
+            <a href="{% url 'carrinho_detalhe' %}" class="text-decoration-none text-dark small">
+                Carrinho
+            </a>
+        </div>
+
+    </div>
+</header>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+<div class="offcanvas-body">
+
+    <!-- USUÁRIO -->
+    {% if user.is_authenticated %}
+        <p class="fw-bold mb-2">Olá, {{ user.username }} 👋</p>
+        <a href="{% url 'logout' %}" class="menu-item d-block mb-3 text-danger">Sair</a>
+    {% else %}
+        <a href="/login" class="menu-item d-block mb-3 fw-bold">Entrar / Cadastrar</a>
+    {% endif %}
+
+    <!-- AÇÕES -->
+    <a href="{% url 'carrinho_detalhe' %}" class="menu-item d-block mb-2">
+        🛒 Carrinho
+    </a>
+</div>
+</div>
+
+
 <body style="background-color: #f8f9fa;">
 
 <div class="container my-5">
-    <h2 class="text-center mb-5" style="color: #b11226;">Meus Pedidos</h2>
+    <h2 class="titulo-pedidos">Meus Pedidos</h2>
 
     {% if pedidos %}
-        <div class="table-responsive bg-white p-4 shadow-sm rounded">
-            <table class="table table-hover">
-                <thead class="table-dark">
+
+    <!-- DESKTOP -->
+    <div class="pedidos-card d-none d-md-block">
+        <div class="table-responsive">
+            <table class="table pedidos-table">
+                <thead>
                     <tr>
-                        <th>Pedido #</th>
+                        <th>Pedido</th>
                         <th>Data</th>
                         <th>Total</th>
                         <th>Status</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for pedido in pedidos %}
                     <tr>
-                        <td><strong>{{ pedido.id }}</strong></td>
+                        <td>#{{ pedido.id }}</td>
                         <td>{{ pedido.data_pedido|date:"d/m/Y H:i" }}</td>
                         <td>R$ {{ pedido.total }}</td>
                         <td>
+                            <span class="status {{ pedido.status }}">
+                                {{ pedido.get_status_display|default:pedido.status }}
+                            </span>
+                        </td>
+                        <td class="d-flex gap-2">
+                            <a href="{% url 'detalhe_pedido' pedido.id %}" class="btn btn-detalhes">
+                            Ver detalhes
+                            </a>
+
                             {% if pedido.status == 'pendente' %}
-                                <span class="badge bg-warning text-dark">Aguardando Pagamento</span>
-                            {% elif pedido.status == 'pago' %}
-                                <span class="badge bg-primary">Aguardando Envio</span>
-                            {% elif pedido.status == 'enviado' %}
-                                <span class="badge bg-info text-dark">Enviado</span>
-                            {% elif pedido.status == 'entregue' %}
-                                <span class="badge bg-success">Entregue</span>
-                            {% else %}
-                                <span class="badge bg-secondary">Cancelado</span>
+                            <a href="{% url 'checkout_pedido' pedido.id %}" class="btn btn-detalhes btn-sm">
+                                Pagar agora
+                            </a>
                             {% endif %}
                         </td>
                     </tr>
@@ -47,17 +120,62 @@
                 </tbody>
             </table>
         </div>
-    {% else %}
-        <div class="text-center py-5">
-            <h4>Você ainda não realizou nenhum pedido.</h4>
-            <a href="{% url 'index' %}" class="btn btn-danger mt-3" style="background-color: #b11226;">Ir às compras</a>
-        </div>
-    {% endif %}
-    
-    <div class="text-center mt-4">
-        <a href="{% url 'index' %}" class="btn btn-outline-dark">Voltar para a Loja</a>
     </div>
+
+    <!-- MOBILE -->
+    <div class="d-md-none">
+        {% for pedido in pedidos %}
+        <div class="pedido-mobile-card">
+            <div class="pedido-header">
+                <strong>Pedido #{{ pedido.id }}</strong>
+                <span class="status {{ pedido.status }}">
+                    {{ pedido.get_status_display|default:pedido.status }}
+                </span>
+            </div>
+
+            <div class="pedido-info">
+                <p><strong>Data:</strong> {{ pedido.data_pedido|date:"d/m/Y H:i" }}</p>
+                <p><strong>Total:</strong> R$ {{ pedido.total }}</p>
+            </div>
+
+            <!-- TIMELINE -->
+            <div class="timeline">
+                <div class="step {% if pedido.status != 'pendente' %}active{% endif %}">Pagamento</div>
+                <div class="step {% if pedido.status in 'enviado entregue' %}active{% endif %}">Envio</div>
+                <div class="step {% if pedido.status == 'entregue' %}active{% endif %}">Entrega</div>
+            </div>
+
+            {% if pedido.status == 'pendente' %}
+                <a href="{% url 'checkout_pedido' pedido.id %}" class="btn btn-detalhes btn-sm">
+                    💳 Pagar agora
+                </a>
+            {% endif %}
+
+            <a href="{% url 'detalhe_pedido' pedido.id %}" class="btn btn-detalhes">
+                Ver detalhes
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="sem-pedidos text-center">
+        <h4>Você ainda não realizou nenhum pedido</h4>
+        <a href="{% url 'index' %}" class="btn btn-primary mt-3">Ir às compras</a>
+    </div>
+    {% endif %}
+
 </div>
+<footer class="bg-white py-5 border-top">
+    <div class="container text-center">
+        <h5 class="fw-bold">Vest Lavichy</h5>
+        <p class="text-muted small">Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <a href="https://wa.me/5521977595943" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconZap.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <a href="https://www.instagram.com/vest_lavichy" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconInsta.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <p class="mt-4 mb-0 text-muted" style="font-size: 0.8rem;">© 2026 Vest Lavichy • Todos os direitos reservados</p>
+    </div>
+</footer>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

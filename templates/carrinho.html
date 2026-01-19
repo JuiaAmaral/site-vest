@@ -4,113 +4,185 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vest Lavichy - Carrinho</title>
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/carrinho.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/carrinho.css' %}">
 </head>
 <body>
 
-<div class="container my-5" style="min-height: 70vh;">
-    <h2 class="mb-4">O Seu Carrinho 🛒</h2>
+<header class="checkout-header shadow-sm bg-white position-relative">
+    <div class="container d-flex align-items-center justify-content-between py-3">
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+        <div class="d-flex align-items-center">
+            <button class="btn d-md-none me-2" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+                ☰
+            </button>
 
-    <!-- TABELA RESPONSIVA -->
-    <div class="table-responsive">
-        <table class="table align-middle cart-table">
-            <thead class="table-light">
-                <tr>
-                    <th>Produto</th>
-                    <th>Tamanho</th> 
-                    <th>Qtd</th>
-                    <th>Preço</th>
-                    <th>Subtotal</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in itens_carrinho %}
-                <tr>
-                    <td data-label="Produto">
-                        {{ item.produto.nome }}
-                    </td>
-
-                    <td data-label="Tamanho">
-                        <span class="badge bg-dark">
-                            {{ item.tamanho }}
-                        </span>
-                    </td> 
-
-                    <td data-label="Qtd">
-                        {{ item.quantidade }}
-                    </td>
-
-                    <td data-label="Preço">
-                        R$ {{ item.produto.preco }}
-                    </td>
-
-                    <td data-label="Subtotal">
-                        R$ {{ item.subtotal }}
-                    </td>
-
-                    <td data-label="Ações">
-                        <a href="{% url 'remover_do_carrinho' item.item_id %}"
-                           class="btn btn-sm btn-danger w-100">
-                            Remover
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center py-5">
-                        O seu carrinho está vazio.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="text-end mt-4">
-        <h4 class="mb-3">
-            Total Produtos:
-            <span class="text-success">
-                R$ {{ total }}
-            </span>
-        </h4>
-
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{% url 'index' %}"
-               class="btn btn-outline-secondary btn-lg px-4 fw-bold">
-                CONTINUAR COMPRANDO
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'img/icones_categorias/VestLavichy.png' %}"
+                     alt="Logo" style="max-height: 45px;">
             </a>
+        </div>
 
+        <div class="brand-wrapper">
+            <span class="brand-center">Vest Lavichy</span>
+        </div>
+
+<div class="header-icons d-none d-md-flex gap-3 align-items-center">
+    {% if user.is_authenticated %}
+        <span class="small text-muted">
+            Olá, {{ user.username }}
+        </span>
+        <a href="{% url 'meus_pedidos' %}" class="text-decoration-none text-dark small">
+            Meus Pedidos
+        </a>
+        <a href="{% url 'logout' %}" class="text-decoration-none text-dark small">
+            Sair
+        </a>
+    {% else %}
+        <a href="/login" class="text-decoration-none text-dark small">
+            Entrar
+        </a>
+    {% endif %}
+</div>
+
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+
+        <hr>
+
+        <div class="offcanvas-body">
             {% if user.is_authenticated %}
-                <a href="{% url 'finalizar_compra' %}"
-                   class="btn btn-success btn-lg px-5 fw-bold">
-                    FINALIZAR COMPRA
+                <p class="fw-bold mb-2">Olá, {{ user.username }} 👋</p>
+                <a href="{% url 'meus_pedidos' %}" class="menu-item d-block mb-2 text-decoration-none text-dark">
+                    📦 Meus Pedidos
+                </a>
+                <a href="{% url 'logout' %}" class="d-block mb-3 text-danger text-decoration-none">
+                    Sair
                 </a>
             {% else %}
-                <a href="{% url 'login' %}?next={% url 'carrinho_detalhe' %}"
-                   class="btn btn-warning btn-lg px-5 fw-bold">
-                    FAÇA LOGIN PARA FINALIZAR
+                <a href="{% url 'login' %}" class="d-block mb-3 fw-bold text-decoration-none">
+                    Entrar / Cadastrar
                 </a>
             {% endif %}
         </div>
     </div>
+
+    </div>
+</header>
+
+<div class="container my-5 carrinho-page" style="min-height: 70vh;">
+
+    <h2 class="titulo-carrinho">Seu Carrinho</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="cart-card">
+
+        <div class="table-responsive">
+            <table class="table cart-table align-middle">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Tamanho</th>
+                        <th>Cor</th>
+                        <th>Qtd</th>
+                        <th class="text-end">Preço</th>
+                        <th class="text-end">Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in itens_carrinho %}
+                    <tr>
+                        <td data-label="Produto" class="fw-semibold">
+                        {{ item.produto.nome }}
+                    </td>
+
+                        <td data-label="Tamanho">
+                            <span class="badge bg-light text-dark border">
+                            {{ item.tamanho }}
+                            </span>
+                        </td>
+
+                        <td data-label="Cor" class="small text-muted">
+                             {{ item.cor|default:"-" }}
+                         </td>
+
+                        <td data-label="Qtd">
+                            {{ item.quantidade }}
+                        </td>
+
+                        <td data-label="Preço" class="text-end">
+                            R$ {{ item.produto.preco }}
+                        </td>
+
+                        <td data-label="Subtotal" class="text-end fw-bold">
+                            R$ {{ item.subtotal }}
+                        </td>
+
+                        <td data-label="">
+                            <a href="{% url 'remover_do_carrinho' item.item_id %}"
+                                class="btn btn-remover">
+                                Remover
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            Seu carrinho está vazio.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-resumo">
+            <div class="d-flex justify-content-between mb-3">
+                <span>Total produtos</span>
+                <strong>R$ {{ total }}</strong>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'index' %}" class="btn btn-continuar flex-fill">
+                     Continuar comprando
+                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'finalizar_compra' %}" class="btn btn-pagar flex-fill">
+                        Finalizar compra
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'carrinho_detalhe' %}"
+                       class="btn btn-warning flex-fill">
+                        Entrar para finalizar
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
 </div>
+
 
 <footer class="py-4 bg-light mt-5">
     <div class="container text-center">
         <h5>Vest Lavichy</h5>
         <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <a href="https://wa.me/5521977595943" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconZap.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <a href="https://www.instagram.com/vest_lavichy" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconInsta.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
         <p class="mt-2 text-muted">
             © 2026 Vest Lavichy • Todos os direitos reservados
         </p>

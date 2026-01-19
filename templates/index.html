@@ -57,16 +57,45 @@
         <h5 class="offcanvas-title">Menu</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
-    <div class="offcanvas-body">
-         <a href="{% url 'vitrine_produtos' %}?novidade=true" class="menu-item d-block mb-2 fw-bold" style="color: #b11226;">✨ Novidades</a>
-         <hr>
-         {% for s in secoes %}
-             <a href="{% url 'vitrine_produtos' %}?secao={{ s.nome }}" class="menu-item d-block mb-2">{{ s.nome }}</a>
-         {% endfor %}
-         <hr>
-         <a href="{% url 'carrinho_detalhe' %}" class="menu-item d-block mb-2">Carrinho</a>
-         <a href="{% url 'meus_pedidos' %}" class="menu-item d-block mb-2">Meus Pedidos</a>
-    </div>
+
+<div class="offcanvas-body">
+
+    <!-- USUÁRIO -->
+    {% if user.is_authenticated %}
+        <p class="fw-bold mb-2">Olá, {{ user.username }} 👋</p>
+        <a href="{% url 'logout' %}" class="menu-item d-block mb-3 text-danger">Sair</a>
+    {% else %}
+        <a href="/login" class="menu-item d-block mb-3 fw-bold">Entrar / Cadastrar</a>
+    {% endif %}
+
+    <hr>
+
+    <!-- CATEGORIAS -->
+    <a href="{% url 'vitrine_produtos' %}?novidade=true"
+       class="menu-item d-block mb-2 fw-bold"
+       style="color: #b11226;">
+        ✨ Novidades
+    </a>
+
+    {% for s in secoes %}
+        <a href="{% url 'vitrine_produtos' %}?secao={{ s.nome }}"
+           class="menu-item d-block mb-2">
+            {{ s.nome }}
+        </a>
+    {% endfor %}
+
+    <hr>
+
+    <!-- AÇÕES -->
+    <a href="{% url 'carrinho_detalhe' %}" class="menu-item d-block mb-2">
+        🛒 Carrinho
+    </a>
+
+    <a href="{% url 'meus_pedidos' %}" class="menu-item d-block mb-2">
+        📦 Meus Pedidos
+    </a>
+
+</div>
 </div>
 
 <main>
@@ -119,7 +148,7 @@
         </div>
 
         <div class="container my-5">
-            <div class="d-flex justify-content-center gap-4 flex-wrap text-center">
+            <div class="categorias-scroll text-center">
                 {% for s in secoes %}
                     <a href="{% url 'vitrine_produtos' %}?secao={{ s.nome }}" class="categoria-item text-decoration-none">
                         <div class="cat-circle-img mx-auto"> 
@@ -135,29 +164,41 @@
             </div>
         </div>
 
-        {% if colecao_luxo %}
-        <div class="container my-5">
-            <h3 class="mb-4 text-center">SEJA LUXUOSA ESSE FIM DE ANO</h3>
-            <div class="row flex-nowrap overflow-auto g-4 pb-3 custom-slider no-scrollbar">
-                {% for item in colecao_luxo %}
-                <div class="col-9 col-md-3 flex-shrink-0">
-                    <div class="card border-0 shadow-sm h-100">
-                        {% if item.produto_associado %}
-                            <a href="{% url 'produto_detalhe' item.produto_associado.id %}">
-                                <img src="{{ item.imagem.url }}" class="card-img-top rounded">
-                            </a>
-                        {% else %}
-                            <img src="{{ item.imagem.url }}" class="card-img-top rounded">
-                        {% endif %}
-                        <div class="card-body text-center">
-                            <h6 class="card-title-lux" style="color: #333;">{{ item.nome }}</h6>
-                        </div>
-                    </div>
+{% if colecao_luxo %}
+<div class="container my-5 position-relative section-moda">
+    <h3 class="mb-4 text-center">ESTEJA SEMPRE NA MODA</h3>
+
+    <div id="modaRow" class="row flex-nowrap overflow-auto g-4 pb-3 custom-slider no-scrollbar"
+         style="scroll-behavior: smooth;">
+        {% for item in colecao_luxo %}
+        <div class="col-9 col-md-3 flex-shrink-0">
+            <div class="card border-0 shadow-sm h-100">
+                {% if item.produto_associado %}
+                    <a href="{% url 'produto_detalhe' item.produto_associado.id %}">
+                        <img src="{{ item.imagem.url }}" class="card-img-top rounded">
+                    </a>
+                {% else %}
+                    <img src="{{ item.imagem.url }}" class="card-img-top rounded">
+                {% endif %}
+                <div class="card-body text-center">
+                    <h6 class="card-title-lux" style="color: #333;">{{ item.nome }}</h6>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- SETAS -->
+    <button class="btn-seta seta-esq d-none d-md-flex" onclick="scrollModa('left')">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="btn-seta seta-dir d-none d-md-flex" onclick="scrollModa('right')">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+{% endif %}
+
 
         <div class="container my-5 position-relative section-destaque">
             <h3 class="mb-4 text-center">Destaques</h3>

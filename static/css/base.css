@@ -1,0 +1,101 @@
+/* HEADER PRINCIPAL */
+.header-container {
+    position: relative; /* referência para absolute do brand-wrapper no desktop */
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/* TEXTO CENTRAL */
+.brand-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.brand-center {
+    font-family: 'Times New Roman', serif;
+    font-size: 2rem;
+    color: #b11226;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* LOGO */
+.logo-img {
+    max-height: 55px;
+}
+
+/* ICONE/BTN USUARIO (Sair/Entrar/Meus Pedidos) */
+.header-icons {
+    margin-left: auto; /* extrema direita */
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .header-container {
+        justify-content: flex-start; /* logo à esquerda */
+        align-items: center;
+        padding: 0 1rem;
+        position: relative;
+    }
+
+    /* Logo menor à esquerda */
+    .logo-img {
+        max-height: 40px;
+    }
+
+    /* TEXTO AO LADO DA LOGO */
+    .brand-wrapper {
+        position: static;
+        transform: none;
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+        min-width: 0;
+        margin-left: 0.5rem;
+        pointer-events: auto;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .brand-center {
+        font-size: 1.2rem;
+        font-family: 'Times New Roman', serif;
+        color: #b11226;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
+        text-align: left;
+        line-height: 1.1;
+    }
+
+    /* Ícones/extremos continuam à direita */
+    .header-icons {
+        margin-left: auto;
+        position: relative; /* deixa no flow normal */
+    }
+}
+
+/* REMOVER SUBLINHADO DO MENU MOBILE */
+.offcanvas a {
+    text-decoration: none !important;
+    color: #333;
+}
+
+.offcanvas a:hover {
+    color: #b11226 !important;
+}

@@ -19,12 +19,12 @@
     font-weight: 500;
 }
 
-/* Quando o botão é selecionado (Checked) */
+
 .btn-check:checked + .btn-outline-dark {
-    background-color: #b11226 !important; /* Vermelho da marca */
+    background-color: #b11226 !important; 
     border-color: #b11226 !important;
     color: #fff !important;
-    transform: scale(1.05); /* Leve aumento para destaque */
+    transform: scale(1.05); 
 }
 
 /* Efeito ao passar o mouse */

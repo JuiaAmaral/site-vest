@@ -1,65 +1,222 @@
-/* ==========================
-   CARRINHO – MOBILE FIRST
-========================== */
+:root {
+  --vermelho: #b11226;
+  --cinza-bg: #f6f6f6;
+  --cinza-borda: #eee;
+  --texto: #333;
+}
 
-/* Ajustes gerais */
-.cart-table th,
+/* ======================
+   BASE DA PÁGINA
+====================== */
+
+body {
+  background-color: var(--cinza-bg);
+  font-family: 'Poppins', sans-serif;
+}
+
+.carrinho-page {
+  background-color: var(--cinza-bg);
+}
+
+/* ======================
+   TÍTULO
+====================== */
+
+.titulo-carrinho {
+  color: var(--vermelho);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+}
+
+/* Título */
+.checkout-page h2 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.brand-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.brand-center {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.5rem;
+  color: var(--vermelho);
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+
+/* ======================
+   CARD PRINCIPAL
+====================== */
+
+.cart-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+}
+
+/* ======================
+   TABELA
+====================== */
+
+.cart-table {
+  margin-bottom: 0;
+}
+
+.cart-table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #555;
+  border-bottom: 2px solid var(--cinza-borda);
+  padding-bottom: 12px;
+  background: transparent;
+}
+
 .cart-table td {
+  font-size: 0.9rem;
+  padding: 14px 8px;
+  border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
 }
 
-/* Mobile */
+.cart-table tbody tr:hover {
+  background: #fafafa;
+}
+
+/* ======================
+   BADGES
+====================== */
+
+.badge {
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* ======================
+   BOTÃO REMOVER
+====================== */
+
+.btn-remover {
+  border-radius: 20px;
+  font-size: 0.75rem;
+  padding: 6px 14px;
+  border: 1px solid var(--vermelho);
+  color: var(--vermelho);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-remover:hover {
+  background: var(--vermelho);
+  color: #fff;
+}
+
+/* ======================
+   RESUMO DO CARRINHO
+====================== */
+
+.cart-resumo {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--cinza-borda);
+}
+
+/* ======================
+   BOTÕES PADRÃO DA LOJA
+====================== */
+
+.btn-pagar,
+.btn.btn-continuar {
+  background-color: var(--vermelho) !important;
+  color: #fff !important;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 0;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.btn-pagar:hover,
+.btn.btn-continuar:hover {
+  background-color: #8f0e1e !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(177,18,38,0.35);
+}
+
+.btn-outline-secondary {
+  border-radius: 14px;
+  font-size: 0.9rem;
+}
+
+/* ======================
+   MOBILE
+====================== */
+
 @media (max-width: 768px) {
 
-  h2 {
-    font-size: 22px;
-    text-align: center;
+  .brand-wrapper {
+    position: static;
+    transform: none;
+    margin-left: 8px;
   }
 
-  /* Esconde o cabeçalho da tabela */
+  .titulo-carrinho {
+    text-align: center;
+    justify-content: center;
+  }
+
   .cart-table thead {
     display: none;
   }
 
-  /* Cada item vira um card */
   .cart-table tbody tr {
     display: block;
-    margin-bottom: 16px;
-    border: 1px solid #e5e5e5;
-    border-radius: 10px;
-    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 16px;
+    padding: 14px;
     background: #fff;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
   }
 
   .cart-table tbody td {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 6px 0;
     border: none;
+    font-size: 0.9rem;
   }
 
   .cart-table tbody td::before {
     content: attr(data-label);
     font-weight: 600;
-    color: #555;
+    color: #777;
   }
 
-  /* Botão remover */
-  .cart-table a.btn {
-    width: 100%;
+  .btn-remover {
+    width: auto;
     margin-top: 8px;
+    align-self: flex-end;
   }
 
-  /* Total + botões */
-  .text-end {
-    text-align: center !important;
+  .cart-table tbody td[data-label="Ação"] {
+    justify-content: flex-end;
   }
 
-  .text-end .d-flex {
+
+  .cart-resumo .d-flex {
     flex-direction: column;
-  }
-
-  .text-end .btn {
-    width: 100%;
+    gap: 12px;
   }
 }

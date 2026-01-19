@@ -5,102 +5,173 @@
     <meta charset="UTF-8">
     <title>Vest Lavichy • Pagamento</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+
 </head>
+
 <body>
 
-<div class="container my-5" style="min-height: 70vh;">
-    <h2 class="mb-4 text-center">Pagamento</h2>
+<header class="checkout-header shadow-sm bg-white position-relative">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+
+        <div class="d-flex align-items-center">
+            <button class="btn d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+                ☰
+            </button>
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'img/icones_categorias/VestLavichy.png' %}" alt="Logo" style="max-height: 45px;">
+            </a>
+        </div>
+
+        <div class="position-absolute top-50 start-50 translate-middle d-none d-md-block">
+            <span class="brand-center">Vest Lavichy</span>
+        </div>
+
+        <div class="header-icons d-flex gap-3 align-items-center">
+            {% if user.is_authenticated %}
+                <span class="small text-muted d-none d-sm-inline">Olá, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="text-decoration-none text-dark small">Sair</a>
+            {% else %}
+                <a href="/login" class="text-decoration-none text-dark small">Entrar</a>
+            {% endif %}
+            <a href="{% url 'meus_pedidos' %}" class="text-decoration-none text-dark small">
+            Meus Pedidos
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if user.is_authenticated %}
+            <p class="fw-bold mb-2">Olá, {{ user.username }} 👋</p>
+            <a href="{% url 'logout' %}" class="menu-item d-block mb-3 text-danger">Sair</a>
+        {% else %}
+            <a href="/login" class="menu-item d-block mb-3 fw-bold">Entrar / Cadastrar</a>
+        {% endif %}
+        <a href="{% url 'meus_pedidos' %}" class="menu-item d-block mb-2 text-decoration-none text-dark">
+            📦 Meus Pedidos
+        </a>
+    </div>
+</div>
+
+<div class="container my-5 checkout-page" style="min-height: 70vh;">
+<br>
     <div class="row">
-        <!-- Detalhes de entrega -->
-        <div class="col-md-7">
-            <div class="card p-4 shadow-sm border-0 mb-4" style="border-radius: 15px; border: 1px solid #eee !important;">
-                <h5>📍 Entrega em {{ perfil.bairro }}</h5>
-                <p class="text-muted">
-                    {{ perfil.logradouro }}, {{ perfil.numero }}<br>
+        <div class="col-lg-8">
+            <div class="checkout-card mb-4 border-0">
+                <h5>📍 Endereço de Entrega</h5>
+                <hr>
+                <p class="text-muted mb-0">
+                    <strong>Bairro:</strong> {{ perfil.bairro }}<br>
+                    {{ perfil.logradouro }}, {{ perfil.numero }} 
+                    {% if perfil.complemento %}- {{ perfil.complemento }}{% endif %}<br>
                     CEP: {{ perfil.cep }} - Rio de Janeiro, RJ
                 </p>
             </div>
 
-            <!-- Itens do carrinho -->
-            <div class="card p-4 shadow-sm border-0" style="background-color: #fdfdfd; border-radius: 15px; border: 1px solid #eee !important;">
-                <h5 class="mb-3">🛍 Itens do Carrinho</h5>
+            <div class="checkout-card border-0">
+                <h5 class="mb-4">🛍 Resumo dos Itens</h5>
+
                 <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
+                    <table class="table checkout-table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th>Produto</th>
-                                <th class="text-center">Qtd</th>
-                                <th class="text-end">Preço</th>
-                                <th class="text-end">Subtotal</th>
+                                <th scope="col">Produto</th>
+                                <th scope="col" class="text-center">Tamanho</th>
+                                <th scope="col" class="text-center">Cor</th>
+                                <th scope="col" class="text-center">Quantidade</th>
+                                <th scope="col" class="text-end">Preço</th>
                             </tr>
                         </thead>
                         <tbody>
-    {% for item in itens %}
-    <tr>
-        <td>
-            {{ item.produto.nome }} 
-            <br>
-            <small class="badge bg-secondary">Tam: {{ item.tamanho }}</small>
-        </td>
-        <td class="text-center">{{ item.quantidade }}</td>
-        <td class="text-end">R$ {{ item.produto.preco }}</td>
-        <td class="text-end">R$ {{ item.subtotal }}</td>
-    </tr>
-    {% endfor %}
-</tbody>
+                            {% for item in itens %}
+                            <tr>
+                                <td class="fw-bold text-dark">
+                                {{ item.produto }}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border">{{ item.tamanho }}</span>
+                                </td>
+                                <td class="text-center small">
+                                {{ item.cor|default:"-" }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.quantidade }}
+                                </td>
+                                <td class="text-end fw-bold">
+                                    R$ {{ item.subtotal }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Totais e formas de pagamento -->
-         
-<div class="col-md-5">
-    <div class="card p-4 shadow-sm border-0" style="background-color: #fdfdfd; border-radius: 15px; border: 1px solid #eee !important;">
-        <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal:</span>
-            <span>R$ {{ total_produtos }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2 text-danger">
-            <span>Frete para {{ perfil.bairro }}:</span>
-            <span>R$ {{ frete }}</span>
-        </div>
-        <hr>
-        <div class="d-flex justify-content-between mb-4">
-            <span class="h4">Total:</span>
-            <span class="h4 text-success">R$ {{ total_geral }}</span>
-        </div>
+        <div class="col-lg-4">
+            <div class="checkout-card checkout-resumo border-0">
+                <h5 class="mb-4">Resumo do Pedido</h5>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Produtos:</span>
+                    <span>R$ {{ total_produtos }}</span>
+                </div>
 
-        <a href="{{ link_pagamento }}" class="btn btn-lg w-100 text-white fw-bold mb-3" style="background-color: #b11226;">
-            PAGAR AGORA
-        </a>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Frete ({{ perfil.bairro }}):</span>
+                    <span class="text-success">R$ {{ frete }}</span>
+                </div>
 
-        <a href="{% url 'index' %}" class="btn btn-outline-dark w-100">
-            CONTINUAR COMPRANDO
-        </a>
+                <hr class="my-3">
 
-        <div class="text-center mt-3">
-            <img src="https://img.icons8.com/color/48/000000/visa.png" width="30">
-            <img src="https://img.icons8.com/color/48/000000/mastercard.png" width="30">
-            <img src="https://img.icons8.com/color/48/000000/pix.png" width="30">
-            <p class="text-muted small mt-2">Pagamento seguro via Mercado Pago</p>
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fw-bold fs-5">Total:</span>
+                    <span class="fw-bold fs-5 text-dark">
+                        R$ {{ total_geral }}
+                    </span>
+                </div>
+
+                <a href="{{ link_pagamento }}" class="btn btn-pagar w-100 mb-3 py-3 text-uppercase fw-bold">
+                    Confirmar e Pagar
+                </a>
+
+                <a href="{% url 'index' %}" class="btn btn-continuar w-100 mb-3 py-3 text-uppercase fw-bold">
+                    Continuar Comprando
+                </a>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <div class="mb-2">
+                        <img src="https://img.icons8.com/color/48/000000/visa.png" width="30">
+                        <img src="https://img.icons8.com/color/48/000000/mastercard.png" width="30">
+                        <img src="https://img.icons8.com/color/48/000000/pix.png" width="30">
+                    </div>
+                    <p class="text-muted" style="font-size: 0.75rem;">
+                        Pagamento via Mercado Pago
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<footer>
+<footer class="bg-white py-5 border-top">
     <div class="container text-center">
-        <h5>Vest Lavichy</h5>
-        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
-        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
+        <h5 class="fw-bold">Vest Lavichy</h5>
+        <p class="text-muted small">Moda feminina inspirada em elegância, estilo e sofisticação</p>
+        <a href="https://wa.me/5521977595943" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconZap.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <a href="https://www.instagram.com/vest_lavichy" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconInsta.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <p class="mt-4 mb-0 text-muted" style="font-size: 0.8rem;">© 2026 Vest Lavichy • Todos os direitos reservados</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{% static 'javascript/index.js' %}"></script>
-
 </body>
 </html>

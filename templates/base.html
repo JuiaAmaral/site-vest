@@ -5,43 +5,126 @@
     <meta charset="UTF-8">
     <title>Vest Lavichy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-<div class="top-bar" style="background: #b11226; color: white; text-align: center; padding: 5px; font-size: 14px;">
+<!-- TOPO -->
+<div class="top-bar">
     Frete grátis em compras acima de R$199 • Parcele em até 10x sem juros
 </div>
 
+<!-- HEADER -->
 <header>
-    <div class="container d-flex justify-content-between align-items-center py-3">
-        <div class="logo" style="font-weight: bold; font-size: 24px;">Vest Lavichy</div>
-        <div class="header-icons">
-            {% if user.is_authenticated %}
-                <span>Olá, {{ user.username }}!</span>
-                <a href="{% url 'logout' %}" class="ms-2">Sair</a>
-            {% else %}
-                <a href="{% url 'login' %}">Entrar / Cadastrar</a>
-            {% endif %}
-            <a href="{% url 'carrinho_detalhe' %}" class="ms-3 text-decoration-none">🛒 Carrinho</a>
+    <div class="container header-container py-3">
+
+    <button class="btn d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+        ☰
+    </button>
+
+    <a href="{% url 'index' %}" class="logo">
+        <img src="{% static 'img/icones_categorias/VestLavichy.png' %}"
+             alt="Logo"
+             class="logo-img">
+    </a>
+
+    <div class="brand-wrapper">
+        <span class="brand-center">Vest Lavichy</span>
+    </div>
+
+    <div class="header-icons d-none d-md-flex gap-3">
+        {% if user.is_authenticated %}
+            <span>Olá, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}">Sair</a>
+        {% else %}
+            <a href="/login">Entrar / Cadastrar</a>
+        {% endif %}
+        <a href="{% url 'carrinho_detalhe' %}">Carrinho</a>
+        <a href="{% url 'meus_pedidos' %}">Meus Pedidos</a>
+    </div>
+
+</div>
+
+    <div class="menu-categorias py-2 d-none d-md-block">
+        <div class="container d-flex justify-content-center gap-4">
+            <a href="{% url 'vitrine_produtos' %}?novidade=true">Novidades</a>
+            {% for s in secoes %}
+                {% if s.nome|lower != "novidade" %}
+                    <a href="{% url 'vitrine_produtos' %}?secao={{ s.nome }}">{{ s.nome }}</a>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 </header>
 
+<!-- MENU MOBILE -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body">
+        {% if user.is_authenticated %}
+            <p class="fw-bold mb-2">Olá, {{ user.username }} 👋</p>
+            <a href="{% url 'logout' %}" class="d-block mb-3 text-danger">Sair</a>
+        {% else %}
+            <a href="/login" class="d-block mb-3 fw-bold">Entrar / Cadastrar</a>
+        {% endif %}
+
+        <hr>
+
+        <a href="{% url 'vitrine_produtos' %}?novidade=true" class="d-block mb-2 fw-bold text-danger">
+            ✨ Novidades
+        </a>
+
+        {% for s in secoes %}
+            <a href="{% url 'vitrine_produtos' %}?secao={{ s.nome }}" class="d-block mb-2">
+                {{ s.nome }}
+            </a>
+        {% endfor %}
+
+        <hr>
+
+        <a href="{% url 'carrinho_detalhe' %}" class="d-block mb-2">🛒 Carrinho</a>
+        <a href="{% url 'meus_pedidos' %}" class="d-block mb-2">📦 Meus Pedidos</a>
+    </div>
+</div>
+
+<!-- CONTEÚDO DAS PÁGINAS -->
 <main>
-    {% block content %}
-    {% endblock %}
+    {% block content %}{% endblock %}
 </main>
 
-<footer class="mt-5 py-4 bg-light border-top">
-    <div class="container text-center">
+<!-- CARRINHO FLUTUANTE -->
+<a href="{% url 'carrinho_detalhe' %}" class="carrinho-flutuante">
+    🛒
+    {% if request.session.carrinho %}
+        <span class="badge-count">{{ request.session.carrinho|length }}</span>
+    {% endif %}
+</a>
+
+<!-- FOOTER -->
+<footer class="py-5 bg-light border-top mt-5 text-center">
+    <div class="container">
         <h5>Vest Lavichy</h5>
-        <p>Moda feminina inspirada em elegância, estilo e sofisticação</p>
-        <p class="mt-2">© 2025 Vest Lavichy • Todos os direitos reservados</p>
+        <p>Moda feminina inspirada em elegância e sofisticação</p>
+
+        <a href="https://wa.me/5521977595943" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconZap.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+        <a href="https://www.instagram.com/vest_lavichy" target="_blank"><button class="btn-icon"><img src="{% static 'img/icones_categorias/iconInsta.jpg' %}" alt="Logo" style="max-height: 45px;"></button></a>
+
+        <p class="mt-2 small text-muted">
+            © 2025 Vest Lavichy • Todos os direitos reservados
+        </p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'javascript/index.js' %}"></script>
+
 </body>
 </html>

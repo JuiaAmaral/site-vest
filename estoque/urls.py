@@ -17,6 +17,10 @@ urlpatterns = [
     path('pagamento/erro/', views.pagamento_erro, name='pagamento_erro'),
     path('pagamento/pendente/', views.pagamento_pendente, name='pagamento_pendente'),
     path('meus-pedidos/', views.meus_pedidos, name='meus_pedidos'),
+    path('meus-pedidos/<int:pedido_id>/', views.detalhe_pedido, name='detalhe_pedido'),
     path('produtos/', views.vitrine_produtos, name='vitrine_produtos'),
     path('verificar-usuario/', views.verificar_usuario, name='verificar_usuario'),
+    path('webhook/mercadopago/', views.webhook_mp, name='webhook_mp'),
+    path('pedido/<int:pedido_id>/pagar/', views.pagar_pedido, name='pagar_pedido'),
+    path('pedido/<int:pedido_id>/checkout/', views.checkout_pedido, name='checkout_pedido'),
 ]

@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from django.http import JsonResponse  # <--- ADICIONADO
+from django.http import JsonResponse  
 from .models import Categoria, Pedido, Produto, FreteBairro, PerfilUsuario, Secao, Banner, DestaqueLuxo
 import mercadopago
 from django.conf import settings
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 # --- HOME E BUSCA ---
 
@@ -133,6 +134,7 @@ def verificar_usuario(request):
 # --- CARRINHO COM SUPORTE A TAMANHO ---
 def adicionar_ao_carrinho(request, produto_id):
     carrinho = request.session.get('carrinho', {})
+    cor = request.GET.get('cor', '-')
     tamanho = request.GET.get('tamanho', 'Único')
     item_id = f"{produto_id}-{tamanho}"
     
@@ -145,6 +147,7 @@ def adicionar_ao_carrinho(request, produto_id):
             'nome': produto.nome,
             'preco': str(produto.preco),
             'tamanho': tamanho,
+            'cor': cor,
             'quantidade': 1,
             'imagem': produto.imagens.first().imagem.url if produto.imagens.exists() else ''
         }
@@ -170,6 +173,7 @@ def carrinho_detalhe(request):
                 'produto': produto_obj,
                 'quantidade': dados['quantidade'],
                 'tamanho': dados.get('tamanho', 'Único'),
+                'cor': dados.get('cor', '-'),
                 'subtotal': subtotal,
                 'item_id': item_id 
             })
@@ -190,6 +194,79 @@ def remover_do_carrinho(request, item_id):
     return redirect('carrinho_detalhe')
 
 # --- CHECKOUT E PAGAMENTO ---
+
+@login_required
+def pagar_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+
+    # Só permite pagar se estiver pendente
+    if pedido.status != 'pendente':
+        return redirect('meus_pedidos')
+
+    try:
+        preference = criar_preferencia_mp(pedido)  # sua função do Mercado Pago
+        link_pagamento = preference.get("init_point")
+
+        if not link_pagamento:
+            raise Exception("Link de pagamento não gerado")
+
+        return redirect(link_pagamento)
+
+    except Exception as e:
+        print("ERRO AO GERAR PAGAMENTO:", e)
+        return redirect('meus_pedidos')
+    
+@login_required
+def checkout_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+
+    if pedido.status != 'pendente':
+        return redirect('meus_pedidos')
+
+    perfil = request.user.perfilusuario
+    itens = json.loads(pedido.itens_json)
+
+    total_produtos = sum(item['subtotal'] for item in itens)
+
+    try:
+       frete = float(
+            FreteBairro.objects.get(bairro__iexact=perfil.bairro).valor
+    )
+    except FreteBairro.DoesNotExist:
+        frete = 0
+
+    total_geral = total_produtos + frete
+
+    sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+
+    preference_data = {
+        "items": [{
+            "title": f"Pedido #{pedido.id} - Vest Lavichy",
+            "quantity": 1,
+            "unit_price": float(total_geral),
+        }],
+        "external_reference": str(pedido.id),
+        "back_urls": {
+            "success": "http://127.0.0.1:8000/pagamento/sucesso/",
+            "failure": "http://127.0.0.1:8000/pagamento/erro/",
+            "pending": "http://127.0.0.1:8000/pagamento/pendente/"
+        }
+    }
+
+    preference = sdk.preference().create(preference_data)["response"]
+
+    return render(request, 'checkout.html', {
+        'pedido': pedido,
+        'perfil': perfil,
+        'itens': itens,
+        'total_produtos': total_produtos,
+        'frete': frete,
+        'total_geral': total_geral,
+        'link_pagamento': preference.get("init_point")
+    })
+    
+# -- FINALIZAÇÃO DE COMPRA --
+
 @login_required
 def finalizar_compra(request):
     carrinho_sessao = request.session.get('carrinho', {})
@@ -202,10 +279,10 @@ def finalizar_compra(request):
     except PerfilUsuario.DoesNotExist:
         messages.error(request, "Perfil não encontrado. Complete seu cadastro.")
         return redirect('index')
-    
+
     itens_lista = []
     total_produtos = 0
-    
+
     for item_id, dados in carrinho_sessao.items():
         if isinstance(dados, dict):
             produto_obj = get_object_or_404(Produto, id=dados['produto_id'])
@@ -214,6 +291,7 @@ def finalizar_compra(request):
                 'produto': produto_obj,
                 'nome': dados['nome'],
                 'tamanho': dados.get('tamanho', 'Único'),
+                'cor': dados.get('cor', '-'),
                 'quantidade': dados['quantidade'],
                 'subtotal': subtotal,
             })
@@ -228,23 +306,53 @@ def finalizar_compra(request):
 
     total_geral = float(total_produtos) + float(valor_frete)
 
+    pedido = Pedido.objects.create(
+        usuario=request.user,
+        total=total_geral,
+        status='pendente',
+        itens_json=json.dumps([
+            {
+                "produto": item["nome"],
+                "tamanho": item["tamanho"],
+                "quantidade": item["quantidade"],
+                "cor": item.get("cor", "-"),
+                "subtotal": item["subtotal"]
+            } for item in itens_lista
+        ])
+    )
+
     sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+
     preference_data = {
         "items": [{
             "title": "Pedido Vest Lavichy",
             "quantity": 1,
-            "unit_price": total_geral,
+            "unit_price": float(total_geral),
         }],
+        "external_reference": str(pedido.id),
         "back_urls": {
             "success": "http://127.0.0.1:8000/pagamento/sucesso/",
             "failure": "http://127.0.0.1:8000/pagamento/erro/",
             "pending": "http://127.0.0.1:8000/pagamento/pendente/"
-        },
+        }
     }
 
     preference_response = sdk.preference().create(preference_data)
+
+    if preference_response.get("status") != 201:
+        print("ERRO MERCADO PAGO:", preference_response)
+        messages.error(request, "Erro ao criar pagamento.")
+        return redirect("carrinho_detalhe")
+
     preference = preference_response["response"]
-    link_pagamento = preference["init_point"] 
+    link_pagamento = preference.get("init_point")
+
+    if not link_pagamento:
+        messages.error(request, "Erro ao gerar link de pagamento.")
+        return redirect("carrinho_detalhe")
+
+    pedido.id_pagamento_mp = preference.get("id")
+    pedido.save()
 
     return render(request, 'checkout.html', {
         'perfil': perfil,
@@ -255,33 +363,8 @@ def finalizar_compra(request):
         'link_pagamento': link_pagamento
     })
 
+
 def pagamento_sucesso(request):
-    carrinho_sessao = request.session.get('carrinho', {})
-    if carrinho_sessao:
-        itens_lista_nomes = []
-        total_produtos = 0
-        for item_id, dados in carrinho_sessao.items():
-            subtotal = float(dados['preco']) * dados['quantidade']
-            total_produtos += subtotal
-            itens_lista_nomes.append(f"{dados['quantidade']}x {dados['nome']} (Tam: {dados['tamanho']})")
-
-        try:
-            perfil = request.user.perfilusuario
-            obj_frete = FreteBairro.objects.get(bairro__iexact=perfil.bairro.strip())
-            valor_frete = obj_frete.valor
-        except:
-            valor_frete = 0
-
-        total_final = float(total_produtos + valor_frete)
-        novo_pedido = Pedido.objects.create(
-            usuario=request.user,
-            total=total_final,
-            status='pago',
-            itens_json=", ".join(itens_lista_nomes),
-            id_pagamento_mp=request.GET.get('payment_id')
-        )
-        del request.session['carrinho']
-        return render(request, 'pagamento_sucesso.html', {'pedido': novo_pedido})
     return render(request, 'pagamento_sucesso.html')
 
 def pagamento_erro(request):
@@ -350,3 +433,42 @@ def produto_detalhe(request, produto_id):
         'secoes': secoes,
         'categorias': categorias
     })
+    
+@login_required
+def detalhe_pedido(request, pedido_id):
+    pedido = get_object_or_404(
+        Pedido,
+        id=pedido_id,
+        usuario=request.user
+    )
+
+    itens = json.loads(pedido.itens_json)
+
+    return render(request, 'pedido_detalhe.html', {
+        'pedido': pedido,
+        'itens': itens
+    })
+    
+# -- WEBHOOK PARA ATUALIZAÇÃO DE PAGAMENTO --
+    
+@csrf_exempt
+def webhook_mp(request):
+    data = json.loads(request.body)
+
+    if data.get("type") == "payment":
+        payment_id = data["data"]["id"]
+
+        sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+        payment = sdk.payment().get(payment_id)["response"]
+
+        if payment.get("status") == "approved":
+            pedido_id = payment.get("external_reference")
+            try:
+                pedido = Pedido.objects.get(id=pedido_id)
+                pedido.status = "pago"
+                pedido.id_pagamento_mp = payment_id
+                pedido.save()
+            except Pedido.DoesNotExist:
+                pass
+
+    return JsonResponse({"status": "ok"})

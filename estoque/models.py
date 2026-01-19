@@ -46,11 +46,38 @@ class Produto(models.Model):
         # Divide por vírgula, remove espaços extras e filtra itens vazios
             return [t.strip() for t in self.tamanhos_disponiveis.split(',') if t.strip()]
         return []
+    cores_disponiveis = models.CharField(
+    max_length=50, 
+    verbose_name="Cores Disponíveis", 
+    help_text="Ex: Preto, Branco, Azul",
+    null=True, 
+    blank=True
+)
+    def get_cores_list(self):
+        if self.cores_disponiveis:
+            return [c.strip() for c in self.cores_disponiveis.split(',') if c.strip()]
+        return []
+
+    def imagem_principal(self):
+        return self.imagens.filter(principal=True).first()
 
 class ImagemProduto(models.Model):
-    produto = models.ForeignKey(Produto, on_delete=models.CASCADE, related_name='imagens')
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name='imagens'
+    )
     imagem = models.ImageField(upload_to='produtos/')
     principal = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['produto'],
+                condition=models.Q(principal=True),
+                name='uma_imagem_principal_por_produto'
+            )
+        ]
 
 class PerfilUsuario(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

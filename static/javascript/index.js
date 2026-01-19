@@ -48,3 +48,14 @@ function scrollSlider(direction) {
         row.scrollLeft += scrollAmount;
     }
 }
+
+function scrollModa(direction) {
+    const container = document.getElementById('modaRow');
+    const scrollAmount = 300;
+
+    if (direction === 'left') {
+        container.scrollLeft -= scrollAmount;
+    } else {
+        container.scrollLeft += scrollAmount;
+    }
+}

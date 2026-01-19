@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedido #{{ pedido.id }} - Vest Lavichy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/pedido_detalhe.css' %}">
+</head>
+
+<body>
+
+<div class="container-fluid my-4 px-3">
+
+    <div class="pedido-header">
+        <div>
+            <h2>Pedido #{{ pedido.id }}</h2>
+            <p class="data-pedido">
+                {{ pedido.data_pedido|date:"d/m/Y H:i" }}
+            </p>
+        </div>
+
+        <span class="status {{ pedido.status }}">
+            {{ pedido.status|title }}
+        </span>
+    </div>
+
+    <div class="timeline">
+        <div class="step {% if pedido.status != 'pendente' %}active{% endif %}">
+            Pagamento
+        </div>
+        <div class="step {% if pedido.status in 'enviado entregue' %}active{% endif %}">
+            Envio
+        </div>
+        <div class="step {% if pedido.status == 'entregue' %}active{% endif %}">
+            Entregue
+        </div>
+    </div>
+
+    <div class="produtos-card">
+        <h5 class="mb-4">🛍️ Itens do Pedido</h5>
+
+        {% for item in itens %}
+        <div class="produto-item">
+            <div>
+                <strong>{{ item.produto }}</strong>
+                <p class="text-muted small mb-1">Tamanho: {{ item.tamanho }}</p>
+                <p class="text-muted small mb-1">Cor: {{ item.cor }}</p>
+                <p class="text-muted small">Quantidade: {{ item.quantidade }}</p>
+            </div>
+
+            <div class="preco">
+                R$ {{ item.subtotal }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="total-card">
+        <span>Total do Pedido</span>
+        <strong>R$ {{ pedido.total }}</strong>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'meus_pedidos' %}" class="btn-voltar">
+            ← Voltar para meus pedidos
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+:root {
+    --vermelho: #b11226;
+    --cinza: #f8f9fa;
+    --verde: #2ecc71;
+    --azul: #3498db;
+    --amarelo: #f1c40f;
+}
+
+/* Título */
+.titulo-pedidos {
+    text-align: center;
+    font-weight: 600;
+    color: var(--vermelho);
+    margin-bottom: 40px;
+}
+
+.brand-center {
+    font-family: 'Times New Roman', serif;
+    font-size: 1.5rem;
+    color: #b11226;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* CARD DESKTOP */
+.pedidos-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* BOTÃO PAGAR */
+.btn-pagar {
+    background: var(--vermelho);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    padding: 6px 16px;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-pagar:hover {
+    background: #8e0f1f;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+
+/* Tabela */
+.pedidos-table th {
+    background: #111;
+    color: #fff;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border: none;
+}
+
+.pedidos-table td {
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+/* Hover */
+.pedidos-table tbody tr {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.pedidos-table tbody tr:hover {
+    background: #fafafa;
+    transform: scale(1.01);
+}
+
+/* STATUS */
+.status {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status.pendente { background: var(--amarelo); color: #000; }
+.status.pago { background: var(--azul); color: #fff; }
+.status.enviado { background: #8e44ad; color: #fff; }
+.status.entregue { background: var(--verde); color: #fff; }
+.status.cancelado { background: #7f8c8d; color: #fff; }
+
+/* Botão */
+.btn-detalhes {
+    border-radius: 20px;
+    font-size: 0.8rem;
+    padding: 6px 16px;
+    border: 1px solid var(--vermelho);
+    color: var(--vermelho);
+    transition: all 0.3s;
+}
+
+.btn-detalhes:hover {
+    background: var(--vermelho);
+    color: #fff;
+}
+
+/* MOBILE CARD */
+.pedido-mobile-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Timeline */
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.step {
+    flex: 1;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #aaa;
+    position: relative;
+}
+
+.step::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background: #ccc;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 5px;
+}
+
+.step.active {
+    color: var(--vermelho);
+}
+
+.step.active::before {
+    background: var(--vermelho);
+}
+
+/* Estado vazio */
+.sem-pedidos {
+    background: #fff;
+    padding: 50px;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 768px) {
+
+    .pedido-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .timeline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin: 15px 0;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        font-size: 0.8rem;
+    }
+
+    .step::before {
+        margin: 0;
+    }
+
+    .btn-detalhes {
+        margin-top: 10px;
+    }
+
+    .btn-pagar {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+
+    .brand-center {
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+}
